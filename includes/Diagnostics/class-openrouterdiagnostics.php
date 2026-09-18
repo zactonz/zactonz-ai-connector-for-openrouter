@@ -1,0 +1,147 @@
+<?php
+/**
+ * Connection diagnostics.
+ *
+ * @package Zactonz\AiConnectorForOpenRouter\Diagnostics
+ */
+
+declare( strict_types=1 );
+
+namespace Zactonz\AiConnectorForOpenRouter\Diagnostics;
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
+use Zactonz\AiConnectorForOpenRouter\Provider\OpenRouterProfile;
+use Zactonz\AiConnectorForOpenRouter\Settings\OpenRouterSettings;
+use WordPress\AiClient\AiClient;
+
+/**
+ * Produces a redacted, side-effect-free report for administrators.
+ *
+ * @since 1.0.0
+ */
+class OpenRouterDiagnostics {
+
+	/**
+	 * Runs the diagnostics.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return array<string, mixed> Diagnostic report.
+	 */
+	public function run(): array {
+		$endpoint = OpenRouterSettings::get_base_url();
+		$url      = OpenRouterSettings::get_models_url();
+
+		if ( ! OpenRouterSettings::has_credentials() ) {
+			return $this->report(
+				false,
+				$endpoint,
+				0,
+				0,
+				array(),
+				sprintf(
+					/* translators: %s: Provider name. */
+					__( 'No %s credentials are stored yet.', 'zactonz-ai-provider-openrouter' ),
+					OpenRouterProfile::name()
+				)
+			);
+		}
+
+		$started  = microtime( true );
+		$response = wp_remote_get(
+			$url,
+			array(
+				'headers'     => OpenRouterSettings::get_request_headers( 'GET', $url ),
+				'redirection' => 2,
+				'timeout'     => 20,
+			)
+		);
+		$latency  = (int) round( ( microtime( true ) - $started ) * 1000 );
+
+		if ( is_wp_error( $response ) ) {
+			return $this->report( false, $endpoint, 0, $latency, array(), $response->get_error_message() );
+		}
+
+		$status = (int) wp_remote_retrieve_response_code( $response );
+		if ( $status < 200 || $status >= 300 ) {
+			return $this->report(
+				false,
+				$endpoint,
+				$status,
+				$latency,
+				array(),
+				sprintf(
+					/* translators: 1: Provider name, 2: HTTP status code. */
+					__( '%1$s returned HTTP %2$d.', 'zactonz-ai-provider-openrouter' ),
+					OpenRouterProfile::name(),
+					$status
+				)
+			);
+		}
+
+		$body    = json_decode( wp_remote_retrieve_body( $response ), true );
+		$entries = array();
+		if ( is_array( $body ) ) {
+			foreach ( array( 'data', 'models', 'modelSummaries' ) as $key ) {
+				if ( isset( $body[ $key ] ) && is_array( $body[ $key ] ) ) {
+					$entries = $body[ $key ];
+					break;
+				}
+			}
+		}
+
+		$model_ids = array();
+		foreach ( $entries as $entry ) {
+			if ( ! is_array( $entry ) ) {
+				continue;
+			}
+			foreach ( array( 'id', 'model', 'name', 'modelId' ) as $key ) {
+				if ( isset( $entry[ $key ] ) && is_string( $entry[ $key ] ) && '' !== $entry[ $key ] ) {
+					$model_ids[] = $entry[ $key ];
+					break;
+				}
+			}
+		}
+
+		return $this->report( true, $endpoint, $status, $latency, $model_ids, '' );
+	}
+
+	/**
+	 * Assembles the report.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param bool               $connected Whether the provider answered.
+	 * @param string             $endpoint Endpoint that was contacted.
+	 * @param int                $status HTTP status code.
+	 * @param int                $latency Round trip time in milliseconds.
+	 * @param array<int, string> $model_ids Discovered model identifiers.
+	 * @param string             $error Error message, when there is one.
+	 * @return array<string, mixed> Diagnostic report.
+	 */
+	private function report( bool $connected, string $endpoint, int $status, int $latency, array $model_ids, string $error ): array {
+		$missing_defaults = array();
+		foreach ( OpenRouterSettings::get_preferred_models() as $capability => $model_id ) {
+			if ( '' !== $model_id && ! in_array( $model_id, $model_ids, true ) ) {
+				$missing_defaults[ $capability ] = $model_id;
+			}
+		}
+
+		return array(
+			'connected'       => $connected,
+			'provider'        => OpenRouterProfile::name(),
+			'endpoint'        => $endpoint,
+			'error'           => $error,
+			'httpStatus'      => $status,
+			'latencyMs'       => $latency,
+			'modelCount'      => count( $model_ids ),
+			'missingDefaults' => $missing_defaults,
+			'aiClientVersion' => class_exists( AiClient::class ) ? AiClient::VERSION : '',
+			'streamingReady'  => function_exists( 'curl_init' ),
+			'timestamp'       => gmdate( 'c' ),
+		);
+	}
+}

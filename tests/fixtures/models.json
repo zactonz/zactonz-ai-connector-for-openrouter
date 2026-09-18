@@ -1,0 +1,53 @@
+{
+  "data": [
+    {
+      "id": "qwen/qwen3-vl-235b-instruct",
+      "name": "Qwen: Qwen3 VL 235B Instruct",
+      "context_length": 200000,
+      "architecture": {
+        "input_modalities": ["text", "image"],
+        "output_modalities": ["text"],
+        "tokenizer": "Qwen"
+      },
+      "top_provider": { "context_length": 200000, "max_completion_tokens": 64000 },
+      "supported_parameters": ["max_tokens", "temperature", "top_p", "stop", "tools", "tool_choice", "reasoning", "structured_outputs", "response_format"],
+      "pricing": { "prompt": "0.000003", "completion": "0.000015" }
+    },
+    {
+      "id": "meta-llama/llama-3.3-70b-instruct",
+      "name": "Meta: Llama 3.3 70B Instruct",
+      "context_length": 131072,
+      "architecture": {
+        "input_modalities": ["text"],
+        "output_modalities": ["text"],
+        "tokenizer": "Llama3"
+      },
+      "supported_parameters": ["max_tokens", "temperature", "top_p", "stop", "frequency_penalty", "presence_penalty"],
+      "pricing": { "prompt": "0.00000012", "completion": "0.0000003" }
+    },
+    {
+      "id": "deepseek/deepseek-r1",
+      "name": "DeepSeek: R1",
+      "context_length": 64000,
+      "architecture": {
+        "input_modalities": ["text"],
+        "output_modalities": ["text"],
+        "tokenizer": "DeepSeek"
+      },
+      "supported_parameters": ["max_tokens", "temperature", "reasoning", "include_reasoning"],
+      "pricing": { "prompt": "0.0000005", "completion": "0.00000215" }
+    },
+    {
+      "id": "openai/gpt-4o-mini",
+      "name": "OpenAI: GPT-4o-mini",
+      "context_length": 128000,
+      "architecture": {
+        "input_modalities": ["text", "image"],
+        "output_modalities": ["text"],
+        "tokenizer": "GPT"
+      },
+      "supported_parameters": ["max_tokens", "temperature", "top_p", "tools", "tool_choice", "structured_outputs", "response_format", "seed"],
+      "pricing": { "prompt": "0.00000015", "completion": "0.0000006" }
+    }
+  ]
+}

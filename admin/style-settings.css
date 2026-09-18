@@ -1,0 +1,103 @@
+.zctz-openrouter-settings {
+	max-width: 64rem;
+}
+
+.zctz-openrouter-models-list {
+	list-style: none;
+	margin: 10px 0;
+	padding: 0;
+}
+
+.zctz-openrouter-model-item {
+	align-items: center;
+	display: flex;
+	flex-wrap: wrap;
+	gap: .5rem;
+	margin-bottom: .5rem;
+}
+
+.zctz-openrouter-model-meta {
+	color: #50575e;
+	font-size: 12px;
+}
+
+.zctz-openrouter-capabilities {
+	display: inline-flex;
+	flex-wrap: wrap;
+	gap: .375rem;
+}
+
+.zctz-openrouter-pill {
+	align-items: center;
+	background-color: #dbe3f0;
+	border-radius: 999px;
+	color: #1f2937;
+	display: inline-flex;
+	font-size: 12px;
+	font-weight: 500;
+	line-height: 1.5;
+	padding: .125rem .5rem;
+}
+
+.zctz-openrouter-pill--vision {
+	background-color: #dbeafe;
+	color: #1e3a8a;
+}
+
+.zctz-openrouter-pill--tools {
+	background-color: #dcfce7;
+	color: #14532d;
+}
+
+.zctz-openrouter-pill--structured {
+	background-color: #fef3c7;
+	color: #713f12;
+}
+
+.zctz-openrouter-pill--reasoning {
+	background-color: #ede9fe;
+	color: #4c1d95;
+}
+
+.zctz-openrouter-pill--embedding {
+	background-color: #cffafe;
+	color: #164e63;
+}
+
+.zctz-openrouter-pill--image {
+	background-color: #fce7f3;
+	color: #831843;
+}
+
+#zctz-openrouter-diagnostics-spinner {
+	float: none;
+	margin-block-start: 4px;
+	margin-inline-start: 6px;
+}
+
+#zctz-openrouter-diagnostics-results.notice {
+	margin: 12px 0 0;
+	padding: 8px 12px;
+}
+
+.zctz-openrouter-diagnostics-heading {
+	font-weight: 600;
+	margin-block: 0 .5rem;
+}
+
+#zctz-openrouter-diagnostics-results table {
+	border-collapse: collapse;
+	width: 100%;
+}
+
+#zctz-openrouter-diagnostics-results th,
+#zctz-openrouter-diagnostics-results td {
+	padding-block: 5px;
+	padding-inline: 0 8px;
+	text-align: start;
+	vertical-align: top;
+}
+
+#zctz-openrouter-diagnostics-results th {
+	width: 11rem;
+}

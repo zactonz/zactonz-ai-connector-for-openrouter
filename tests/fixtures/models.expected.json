@@ -1,0 +1,28 @@
+{
+  "qwen/qwen3-vl-235b-instruct": {
+    "capabilities": ["text_generation", "chat_history"],
+    "options": ["functionDeclarations", "outputSchema", "inputModalities", "systemInstruction"],
+    "features": { "text": true, "vision": true, "tools": true, "structured": true, "reasoning": true, "embedding": false, "image": false },
+    "contextLength": 200000
+  },
+  "meta-llama/llama-3.3-70b-instruct": {
+    "capabilities": ["text_generation", "chat_history"],
+    "options": ["inputModalities", "systemInstruction"],
+    "optionsAbsent": ["functionDeclarations", "outputSchema"],
+    "features": { "text": true, "vision": false, "tools": false, "structured": false, "reasoning": false, "embedding": false, "image": false },
+    "contextLength": 131072
+  },
+  "deepseek/deepseek-r1": {
+    "capabilities": ["text_generation", "chat_history"],
+    "options": ["inputModalities"],
+    "optionsAbsent": ["functionDeclarations", "outputSchema"],
+    "features": { "text": true, "vision": false, "tools": false, "structured": false, "reasoning": true, "embedding": false, "image": false },
+    "contextLength": 64000
+  },
+  "openai/gpt-4o-mini": {
+    "capabilities": ["text_generation", "chat_history"],
+    "options": ["functionDeclarations", "outputSchema", "inputModalities"],
+    "features": { "text": true, "vision": true, "tools": true, "structured": true, "reasoning": false, "embedding": false, "image": false },
+    "contextLength": 128000
+  }
+}
