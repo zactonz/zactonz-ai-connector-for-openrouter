@@ -41,7 +41,7 @@ OpenRouter is a routing gateway that exposes hundreds of models from dozens of l
 
 == Installation ==
 
-1. Upload the plugin files to `/wp-content/plugins/zactonz-ai-provider-openrouter/`, or install the plugin through the WordPress plugins screen.
+1. Upload the plugin files to `/wp-content/plugins/zactonz-ai-connector-openrouter/`, or install the plugin through the WordPress plugins screen.
 2. Activate the plugin through the **Plugins** menu in WordPress.
 3. Go to **Settings > Connectors** and add your OpenRouter API key.
 4. Go to **Settings > OpenRouter** to review the discovered models and choose a default model per capability.

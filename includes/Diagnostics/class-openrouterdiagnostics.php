@@ -44,7 +44,7 @@ class OpenRouterDiagnostics {
 				array(),
 				sprintf(
 					/* translators: %s: Provider name. */
-					__( 'No %s credentials are stored yet.', 'zactonz-ai-provider-openrouter' ),
+					__( 'No %s credentials are stored yet.', 'zactonz-ai-connector-openrouter' ),
 					OpenRouterProfile::name()
 				)
 			);
@@ -75,7 +75,7 @@ class OpenRouterDiagnostics {
 				array(),
 				sprintf(
 					/* translators: 1: Provider name, 2: HTTP status code. */
-					__( '%1$s returned HTTP %2$d.', 'zactonz-ai-provider-openrouter' ),
+					__( '%1$s returned HTTP %2$d.', 'zactonz-ai-connector-openrouter' ),
 					OpenRouterProfile::name(),
 					$status
 				)

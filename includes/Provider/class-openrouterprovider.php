@@ -102,7 +102,7 @@ class OpenRouterProvider extends AbstractApiProvider {
 
 		if ( version_compare( AiClient::VERSION, '1.2.0', '>=' ) ) {
 			$provider_meta[] = function_exists( '__' )
-				? __( 'Text generation, vision, and tool calling through OpenRouter, a single gateway in front of hundreds of models.', 'zactonz-ai-provider-openrouter' )
+				? __( 'Text generation, vision, and tool calling through OpenRouter, a single gateway in front of hundreds of models.', 'zactonz-ai-connector-openrouter' )
 				: 'Text generation, vision, and tool calling through OpenRouter, a single gateway in front of hundreds of models.';
 		}
 

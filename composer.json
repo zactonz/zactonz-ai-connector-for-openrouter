@@ -1,5 +1,5 @@
 {
-  "name": "zactonz/zactonz-ai-provider-openrouter",
+  "name": "zactonz/zactonz-ai-connector-openrouter",
   "description": "Adds an OpenRouter connector to Settings > Connectors for the WordPress AI Client, with access to hundreds of routed models.",
   "type": "wordpress-plugin",
   "license": "GPL-2.0-or-later",
