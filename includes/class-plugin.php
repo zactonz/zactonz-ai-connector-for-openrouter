@@ -110,8 +110,8 @@ class Plugin {
 			$links,
 			sprintf(
 				'<a href="%1$s">%2$s</a>',
-				admin_url( 'options-general.php?page=zactonz-ai-connector-openrouter' ),
-				esc_html__( 'Settings', 'zactonz-ai-connector-openrouter' )
+				admin_url( 'options-general.php?page=zactonz-ai-connector-for-openrouter' ),
+				esc_html__( 'Settings', 'zactonz-ai-connector-for-openrouter' )
 			)
 		);
 

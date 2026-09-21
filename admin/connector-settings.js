@@ -7,7 +7,7 @@
 		return;
 	}
 
-	var panelId = 'zactonz-ai-connector-openrouter-connector-panel';
+	var panelId = 'zactonz-ai-connector-for-openrouter-connector-panel';
 	var strings = config.strings || {};
 	var block = 'zctz-openrouter-connector';
 

@@ -31,7 +31,7 @@ class OpenRouterSettings {
 	private const OPTION_NAME      = 'zctz_openrouter_settings';
 	private const API_KEY_OPTION   = 'zctz_openrouter_api_key';
 	private const SECRET_PREFIX    = 'zctz_openrouter_secret_';
-	private const PAGE_SLUG        = 'zactonz-ai-connector-openrouter';
+	private const PAGE_SLUG        = 'zactonz-ai-connector-for-openrouter';
 	private const SECTION_MAIN     = 'zctz_openrouter_main';
 	private const SECTION_MODELS   = 'zctz_openrouter_models';
 	private const SECTION_ADVANCED = 'zctz_openrouter_advanced';
@@ -49,19 +49,19 @@ class OpenRouterSettings {
 	 * @return array<string, string> Capability keys mapped to labels.
 	 */
 	private static function model_capabilities(): array {
-		$capabilities = array( 'text' => __( 'Default text model', 'zactonz-ai-connector-openrouter' ) );
+		$capabilities = array( 'text' => __( 'Default text model', 'zactonz-ai-connector-for-openrouter' ) );
 
 		if ( OpenRouterProfile::supports( 'vision' ) ) {
-			$capabilities['vision'] = __( 'Default vision model', 'zactonz-ai-connector-openrouter' );
+			$capabilities['vision'] = __( 'Default vision model', 'zactonz-ai-connector-for-openrouter' );
 		}
 		if ( OpenRouterProfile::supports( 'image' ) ) {
-			$capabilities['image'] = __( 'Default image model', 'zactonz-ai-connector-openrouter' );
+			$capabilities['image'] = __( 'Default image model', 'zactonz-ai-connector-for-openrouter' );
 		}
 		if ( OpenRouterProfile::supports( 'embedding' ) ) {
-			$capabilities['embedding'] = __( 'Default embedding model', 'zactonz-ai-connector-openrouter' );
+			$capabilities['embedding'] = __( 'Default embedding model', 'zactonz-ai-connector-for-openrouter' );
 		}
 		if ( OpenRouterProfile::supports( 'tools' ) ) {
-			$capabilities['tools'] = __( 'Default tool model', 'zactonz-ai-connector-openrouter' );
+			$capabilities['tools'] = __( 'Default tool model', 'zactonz-ai-connector-for-openrouter' );
 		}
 
 		return $capabilities;
@@ -107,26 +107,26 @@ class OpenRouterSettings {
 
 		add_settings_section(
 			self::SECTION_MAIN,
-			__( 'Connection', 'zactonz-ai-connector-openrouter' ),
+			__( 'Connection', 'zactonz-ai-connector-for-openrouter' ),
 			'__return_empty_string',
 			self::PAGE_SLUG
 		);
 		add_settings_section(
 			self::SECTION_MODELS,
-			__( 'Models', 'zactonz-ai-connector-openrouter' ),
+			__( 'Models', 'zactonz-ai-connector-for-openrouter' ),
 			'__return_empty_string',
 			self::PAGE_SLUG
 		);
 		add_settings_section(
 			self::SECTION_ADVANCED,
-			__( 'Advanced', 'zactonz-ai-connector-openrouter' ),
+			__( 'Advanced', 'zactonz-ai-connector-for-openrouter' ),
 			'__return_empty_string',
 			self::PAGE_SLUG
 		);
 
 		add_settings_field(
 			self::OPTION_NAME . '_api_key',
-			__( 'API key', 'zactonz-ai-connector-openrouter' ),
+			__( 'API key', 'zactonz-ai-connector-for-openrouter' ),
 			array( $this, 'render_api_key_field' ),
 			self::PAGE_SLUG,
 			self::SECTION_MAIN,
@@ -149,7 +149,7 @@ class OpenRouterSettings {
 
 		add_settings_field(
 			self::OPTION_NAME . '_diagnostics',
-			__( 'Diagnostics', 'zactonz-ai-connector-openrouter' ),
+			__( 'Diagnostics', 'zactonz-ai-connector-for-openrouter' ),
 			array( $this, 'render_diagnostics_field' ),
 			self::PAGE_SLUG,
 			self::SECTION_MAIN
@@ -172,7 +172,7 @@ class OpenRouterSettings {
 		if ( OpenRouterProfile::supports( 'reasoning' ) ) {
 			add_settings_field(
 				self::OPTION_NAME . '_reasoning',
-				__( 'Reasoning effort', 'zactonz-ai-connector-openrouter' ),
+				__( 'Reasoning effort', 'zactonz-ai-connector-for-openrouter' ),
 				array( $this, 'render_reasoning_field' ),
 				self::PAGE_SLUG,
 				self::SECTION_MODELS,
@@ -182,7 +182,7 @@ class OpenRouterSettings {
 
 		add_settings_field(
 			self::OPTION_NAME . '_available_models',
-			__( 'Available models', 'zactonz-ai-connector-openrouter' ),
+			__( 'Available models', 'zactonz-ai-connector-for-openrouter' ),
 			array( $this, 'render_available_models_field' ),
 			self::PAGE_SLUG,
 			self::SECTION_MODELS
@@ -190,7 +190,7 @@ class OpenRouterSettings {
 
 		add_settings_field(
 			self::OPTION_NAME . '_base_url',
-			__( 'API base URL', 'zactonz-ai-connector-openrouter' ),
+			__( 'API base URL', 'zactonz-ai-connector-for-openrouter' ),
 			array( $this, 'render_base_url_field' ),
 			self::PAGE_SLUG,
 			self::SECTION_ADVANCED,
@@ -199,7 +199,7 @@ class OpenRouterSettings {
 
 		add_settings_field(
 			self::OPTION_NAME . '_request_timeout',
-			__( 'Text request timeout', 'zactonz-ai-connector-openrouter' ),
+			__( 'Text request timeout', 'zactonz-ai-connector-for-openrouter' ),
 			array( $this, 'render_timeout_field' ),
 			self::PAGE_SLUG,
 			self::SECTION_ADVANCED,
@@ -208,14 +208,14 @@ class OpenRouterSettings {
 				'default'   => (string) (int) OpenRouterProfile::default_timeout(),
 				'minimum'   => 15,
 				'label_for' => self::OPTION_NAME . '-request-timeout',
-				'help'      => __( 'Seconds to wait for a text response. Reasoning models may need longer.', 'zactonz-ai-connector-openrouter' ),
+				'help'      => __( 'Seconds to wait for a text response. Reasoning models may need longer.', 'zactonz-ai-connector-for-openrouter' ),
 			)
 		);
 
 		if ( OpenRouterProfile::supports( 'embedding' ) ) {
 			add_settings_field(
 				self::OPTION_NAME . '_embedding_request_timeout',
-				__( 'Embedding request timeout', 'zactonz-ai-connector-openrouter' ),
+				__( 'Embedding request timeout', 'zactonz-ai-connector-for-openrouter' ),
 				array( $this, 'render_timeout_field' ),
 				self::PAGE_SLUG,
 				self::SECTION_ADVANCED,
@@ -224,7 +224,7 @@ class OpenRouterSettings {
 					'default'   => '60',
 					'minimum'   => 5,
 					'label_for' => self::OPTION_NAME . '-embedding-request-timeout',
-					'help'      => __( 'Used for single and batch embedding requests.', 'zactonz-ai-connector-openrouter' ),
+					'help'      => __( 'Used for single and batch embedding requests.', 'zactonz-ai-connector-for-openrouter' ),
 				)
 			);
 		}
@@ -232,7 +232,7 @@ class OpenRouterSettings {
 		if ( OpenRouterProfile::supports( 'image' ) ) {
 			add_settings_field(
 				self::OPTION_NAME . '_image_request_timeout',
-				__( 'Image request timeout', 'zactonz-ai-connector-openrouter' ),
+				__( 'Image request timeout', 'zactonz-ai-connector-for-openrouter' ),
 				array( $this, 'render_timeout_field' ),
 				self::PAGE_SLUG,
 				self::SECTION_ADVANCED,
@@ -241,7 +241,7 @@ class OpenRouterSettings {
 					'default'   => '180',
 					'minimum'   => 15,
 					'label_for' => self::OPTION_NAME . '-image-request-timeout',
-					'help'      => __( 'Seconds to wait for generated images.', 'zactonz-ai-connector-openrouter' ),
+					'help'      => __( 'Seconds to wait for generated images.', 'zactonz-ai-connector-for-openrouter' ),
 				)
 			);
 		}
@@ -255,7 +255,7 @@ class OpenRouterSettings {
 	public function register_settings_screen(): void {
 		add_options_page(
 			/* translators: %s: Provider name. */
-			sprintf( __( '%s Settings', 'zactonz-ai-connector-openrouter' ), OpenRouterProfile::name() ),
+			sprintf( __( '%s Settings', 'zactonz-ai-connector-for-openrouter' ), OpenRouterProfile::name() ),
 			OpenRouterProfile::name(),
 			'manage_options',
 			self::PAGE_SLUG,
@@ -341,7 +341,7 @@ class OpenRouterSettings {
 						'zctz_openrouter_invalid_' . $key,
 						sprintf(
 							/* translators: 1: Lowest allowed value, 2: Highest allowed value. */
-							__( 'Use a timeout between %1$d and %2$d seconds.', 'zactonz-ai-connector-openrouter' ),
+							__( 'Use a timeout between %1$d and %2$d seconds.', 'zactonz-ai-connector-for-openrouter' ),
 							$bounds[0],
 							$bounds[1]
 						)
@@ -379,7 +379,7 @@ class OpenRouterSettings {
 				<?php
 				printf(
 					/* translators: 1: Opening link tag to the Connectors screen, 2: Closing link tag, 3: Provider name. */
-					esc_html__( 'The API key can also be managed on the %1$sSettings > Connectors%2$s screen. This screen adds the %3$s options WordPress does not ask for.', 'zactonz-ai-connector-openrouter' ),
+					esc_html__( 'The API key can also be managed on the %1$sSettings > Connectors%2$s screen. This screen adds the %3$s options WordPress does not ask for.', 'zactonz-ai-connector-for-openrouter' ),
 					'<a href="' . esc_url( admin_url( 'options-connectors.php' ) ) . '">',
 					'</a>',
 					esc_html( OpenRouterProfile::name() )
@@ -390,7 +390,7 @@ class OpenRouterSettings {
 				<?php
 				printf(
 					/* translators: 1: Opening link tag to the provider API key page, 2: Closing link tag. */
-					esc_html__( 'Create an API key on the %1$sprovider dashboard%2$s.', 'zactonz-ai-connector-openrouter' ),
+					esc_html__( 'Create an API key on the %1$sprovider dashboard%2$s.', 'zactonz-ai-connector-for-openrouter' ),
 					'<a href="' . esc_url( OpenRouterProfile::api_key_url() ) . '" target="_blank" rel="noopener noreferrer">',
 					'</a>'
 				);
@@ -426,14 +426,14 @@ class OpenRouterSettings {
 			class="regular-text"
 			autocomplete="off"
 			spellcheck="false"
-			placeholder="<?php echo esc_attr( $has_key ? __( 'A key is saved and hidden', 'zactonz-ai-connector-openrouter' ) : __( 'Enter an API key', 'zactonz-ai-connector-openrouter' ) ); ?>"
+			placeholder="<?php echo esc_attr( $has_key ? __( 'A key is saved and hidden', 'zactonz-ai-connector-for-openrouter' ) : __( 'Enter an API key', 'zactonz-ai-connector-for-openrouter' ) ); ?>"
 			<?php disabled( '' !== $override ); ?>
 		/>
 		<?php if ( $has_key && '' === $override ) : ?>
 			<p>
 				<label>
 					<input type="checkbox" name="<?php echo esc_attr( self::OPTION_NAME . '[clear_api_key]' ); ?>" value="1" />
-					<?php echo esc_html__( 'Remove the saved API key', 'zactonz-ai-connector-openrouter' ); ?>
+					<?php echo esc_html__( 'Remove the saved API key', 'zactonz-ai-connector-for-openrouter' ); ?>
 				</label>
 			</p>
 		<?php endif; ?>
@@ -442,7 +442,7 @@ class OpenRouterSettings {
 				<?php
 				printf(
 					/* translators: 1: Opening code tag, 2: Constant name, 3: Closing code tag. */
-					esc_html__( 'The key is supplied by the %1$s%2$s%3$s constant or environment variable and cannot be edited here.', 'zactonz-ai-connector-openrouter' ),
+					esc_html__( 'The key is supplied by the %1$s%2$s%3$s constant or environment variable and cannot be edited here.', 'zactonz-ai-connector-for-openrouter' ),
 					'<code>',
 					esc_html( OpenRouterProfile::api_key_constant() ),
 					'</code>'
@@ -452,7 +452,7 @@ class OpenRouterSettings {
 				<?php
 				printf(
 					/* translators: 1: Opening code tag, 2: Constant name, 3: Closing code tag. */
-					esc_html__( 'Leave blank to keep the saved key. Defining %1$s%2$s%3$s in wp-config.php overrides this field.', 'zactonz-ai-connector-openrouter' ),
+					esc_html__( 'Leave blank to keep the saved key. Defining %1$s%2$s%3$s in wp-config.php overrides this field.', 'zactonz-ai-connector-for-openrouter' ),
 					'<code>',
 					esc_html( OpenRouterProfile::api_key_constant() ),
 					'</code>'
@@ -493,13 +493,13 @@ class OpenRouterSettings {
 				class="regular-text"
 				autocomplete="off"
 				spellcheck="false"
-				placeholder="<?php echo esc_attr( $has_secret ? __( 'A value is saved and hidden', 'zactonz-ai-connector-openrouter' ) : (string) ( $field['placeholder'] ?? '' ) ); ?>"
+				placeholder="<?php echo esc_attr( $has_secret ? __( 'A value is saved and hidden', 'zactonz-ai-connector-for-openrouter' ) : (string) ( $field['placeholder'] ?? '' ) ); ?>"
 			/>
 			<?php if ( $has_secret ) : ?>
 				<p>
 					<label>
 						<input type="checkbox" name="<?php echo esc_attr( self::OPTION_NAME . '[clear_' . $key . ']' ); ?>" value="1" />
-						<?php echo esc_html__( 'Remove the saved value', 'zactonz-ai-connector-openrouter' ); ?>
+						<?php echo esc_html__( 'Remove the saved value', 'zactonz-ai-connector-for-openrouter' ); ?>
 					</label>
 				</p>
 			<?php endif; ?>
@@ -555,7 +555,7 @@ class OpenRouterSettings {
 			placeholder="<?php echo esc_attr( OpenRouterProfile::default_base_url() ); ?>"
 		/>
 		<p class="description">
-			<?php echo esc_html__( 'Leave blank for the default endpoint. Change this only for a proxy or a private gateway.', 'zactonz-ai-connector-openrouter' ); ?>
+			<?php echo esc_html__( 'Leave blank for the default endpoint. Change this only for a proxy or a private gateway.', 'zactonz-ai-connector-for-openrouter' ); ?>
 		</p>
 
 		<?php
@@ -580,13 +580,13 @@ class OpenRouterSettings {
 			data-capability="<?php echo esc_attr( $capability ); ?>"
 			data-selected="<?php echo esc_attr( $value ); ?>"
 		>
-			<option value=""><?php echo esc_html__( 'Automatic', 'zactonz-ai-connector-openrouter' ); ?></option>
+			<option value=""><?php echo esc_html__( 'Automatic', 'zactonz-ai-connector-for-openrouter' ); ?></option>
 			<?php if ( '' !== $value ) : ?>
 				<option value="<?php echo esc_attr( $value ); ?>" selected><?php echo esc_html( $value ); ?></option>
 			<?php endif; ?>
 		</select>
 		<p class="description">
-			<?php echo esc_html__( 'Only models that report this capability are offered. Automatic lets the WordPress AI Client choose.', 'zactonz-ai-connector-openrouter' ); ?>
+			<?php echo esc_html__( 'Only models that report this capability are offered. Automatic lets the WordPress AI Client choose.', 'zactonz-ai-connector-for-openrouter' ); ?>
 		</p>
 
 		<?php
@@ -600,12 +600,12 @@ class OpenRouterSettings {
 	public function render_reasoning_field(): void {
 		$value  = self::get_reasoning_effort();
 		$labels = array(
-			'default' => __( 'Model default', 'zactonz-ai-connector-openrouter' ),
-			'none'    => __( 'No reasoning', 'zactonz-ai-connector-openrouter' ),
-			'minimal' => __( 'Minimal', 'zactonz-ai-connector-openrouter' ),
-			'low'     => __( 'Low', 'zactonz-ai-connector-openrouter' ),
-			'medium'  => __( 'Medium', 'zactonz-ai-connector-openrouter' ),
-			'high'    => __( 'High', 'zactonz-ai-connector-openrouter' ),
+			'default' => __( 'Model default', 'zactonz-ai-connector-for-openrouter' ),
+			'none'    => __( 'No reasoning', 'zactonz-ai-connector-for-openrouter' ),
+			'minimal' => __( 'Minimal', 'zactonz-ai-connector-for-openrouter' ),
+			'low'     => __( 'Low', 'zactonz-ai-connector-for-openrouter' ),
+			'medium'  => __( 'Medium', 'zactonz-ai-connector-for-openrouter' ),
+			'high'    => __( 'High', 'zactonz-ai-connector-for-openrouter' ),
 		);
 		?>
 
@@ -618,7 +618,7 @@ class OpenRouterSettings {
 			<?php endforeach; ?>
 		</select>
 		<p class="description">
-			<?php echo esc_html__( 'Applied to the default text model when it reports reasoning support. Models that always reason ignore this.', 'zactonz-ai-connector-openrouter' ); ?>
+			<?php echo esc_html__( 'Applied to the default text model when it reports reasoning support. Models that always reason ignore this.', 'zactonz-ai-connector-for-openrouter' ); ?>
 		</p>
 		<p class="description" id="<?php echo esc_attr( self::OPTION_NAME . '-reasoning-support' ); ?>"></p>
 
@@ -650,7 +650,7 @@ class OpenRouterSettings {
 			max="1800"
 			step="1"
 		/>
-		<span><?php echo esc_html__( 'seconds', 'zactonz-ai-connector-openrouter' ); ?></span>
+		<span><?php echo esc_html__( 'seconds', 'zactonz-ai-connector-for-openrouter' ); ?></span>
 		<?php if ( ! empty( $args['help'] ) ) : ?>
 			<p class="description"><?php echo esc_html( (string) $args['help'] ); ?></p>
 		<?php endif; ?>
@@ -667,12 +667,12 @@ class OpenRouterSettings {
 		?>
 
 		<button type="button" class="button" id="zctz-openrouter-run-diagnostics">
-			<?php echo esc_html__( 'Run diagnostics', 'zactonz-ai-connector-openrouter' ); ?>
+			<?php echo esc_html__( 'Run diagnostics', 'zactonz-ai-connector-for-openrouter' ); ?>
 		</button>
 		<span class="spinner" id="zctz-openrouter-diagnostics-spinner"></span>
 		<div id="zctz-openrouter-diagnostics-results" aria-live="polite"></div>
 		<p class="description">
-			<?php echo esc_html__( 'Checks the endpoint, latency, discovered models, and the chosen defaults. Credentials are never displayed.', 'zactonz-ai-connector-openrouter' ); ?>
+			<?php echo esc_html__( 'Checks the endpoint, latency, discovered models, and the chosen defaults. Credentials are never displayed.', 'zactonz-ai-connector-for-openrouter' ); ?>
 		</p>
 
 		<?php
@@ -711,21 +711,21 @@ class OpenRouterSettings {
 		$style      = $plugin_dir . 'admin/style-settings.css';
 
 		wp_enqueue_script(
-			'zactonz-ai-connector-openrouter-settings',
+			'zactonz-ai-connector-for-openrouter-settings',
 			plugins_url( 'admin/settings.js', ZCTZ_OPENROUTER_PLUGIN_FILE ),
 			array(),
 			file_exists( $script ) ? (string) filemtime( $script ) : ZCTZ_OPENROUTER_VERSION,
 			true
 		);
 		wp_enqueue_style(
-			'zactonz-ai-connector-openrouter-settings',
+			'zactonz-ai-connector-for-openrouter-settings',
 			plugins_url( 'admin/style-settings.css', ZCTZ_OPENROUTER_PLUGIN_FILE ),
 			array(),
 			file_exists( $style ) ? (string) filemtime( $style ) : ZCTZ_OPENROUTER_VERSION
 		);
 
 		wp_localize_script(
-			'zactonz-ai-connector-openrouter-settings',
+			'zactonz-ai-connector-for-openrouter-settings',
 			'zctzOpenRouterSettings',
 			array(
 				'modelsUrl'      => esc_url_raw(
@@ -748,22 +748,22 @@ class OpenRouterSettings {
 				),
 				'providerName'   => OpenRouterProfile::name(),
 				'strings'        => array(
-					'loadingModels'   => __( 'Loading models...', 'zactonz-ai-connector-openrouter' ),
-					'noModels'        => __( 'No models were returned for this API key.', 'zactonz-ai-connector-openrouter' ),
-					'modelsFailed'    => __( 'Could not load models.', 'zactonz-ai-connector-openrouter' ),
-					'automatic'       => __( 'Automatic', 'zactonz-ai-connector-openrouter' ),
-					'running'         => __( 'Running diagnostics...', 'zactonz-ai-connector-openrouter' ),
-					'connected'       => __( 'Connected', 'zactonz-ai-connector-openrouter' ),
-					'notConnected'    => __( 'Not connected', 'zactonz-ai-connector-openrouter' ),
-					'endpoint'        => __( 'Endpoint', 'zactonz-ai-connector-openrouter' ),
-					'latency'         => __( 'Latency', 'zactonz-ai-connector-openrouter' ),
-					'modelCount'      => __( 'Models discovered', 'zactonz-ai-connector-openrouter' ),
-					'missingDefaults' => __( 'Defaults not found in the model list', 'zactonz-ai-connector-openrouter' ),
-					'aiClient'        => __( 'AI Client version', 'zactonz-ai-connector-openrouter' ),
-					'reasoningYes'    => __( 'This default model reports reasoning support.', 'zactonz-ai-connector-openrouter' ),
-					'reasoningNo'     => __( 'This default model does not report reasoning support.', 'zactonz-ai-connector-openrouter' ),
-					'reasoningPick'   => __( 'Choose a default text model to see whether it supports reasoning.', 'zactonz-ai-connector-openrouter' ),
-					'context'         => __( 'context', 'zactonz-ai-connector-openrouter' ),
+					'loadingModels'   => __( 'Loading models...', 'zactonz-ai-connector-for-openrouter' ),
+					'noModels'        => __( 'No models were returned for this API key.', 'zactonz-ai-connector-for-openrouter' ),
+					'modelsFailed'    => __( 'Could not load models.', 'zactonz-ai-connector-for-openrouter' ),
+					'automatic'       => __( 'Automatic', 'zactonz-ai-connector-for-openrouter' ),
+					'running'         => __( 'Running diagnostics...', 'zactonz-ai-connector-for-openrouter' ),
+					'connected'       => __( 'Connected', 'zactonz-ai-connector-for-openrouter' ),
+					'notConnected'    => __( 'Not connected', 'zactonz-ai-connector-for-openrouter' ),
+					'endpoint'        => __( 'Endpoint', 'zactonz-ai-connector-for-openrouter' ),
+					'latency'         => __( 'Latency', 'zactonz-ai-connector-for-openrouter' ),
+					'modelCount'      => __( 'Models discovered', 'zactonz-ai-connector-for-openrouter' ),
+					'missingDefaults' => __( 'Defaults not found in the model list', 'zactonz-ai-connector-for-openrouter' ),
+					'aiClient'        => __( 'AI Client version', 'zactonz-ai-connector-for-openrouter' ),
+					'reasoningYes'    => __( 'This default model reports reasoning support.', 'zactonz-ai-connector-for-openrouter' ),
+					'reasoningNo'     => __( 'This default model does not report reasoning support.', 'zactonz-ai-connector-for-openrouter' ),
+					'reasoningPick'   => __( 'Choose a default text model to see whether it supports reasoning.', 'zactonz-ai-connector-for-openrouter' ),
+					'context'         => __( 'context', 'zactonz-ai-connector-for-openrouter' ),
 				),
 			)
 		);
@@ -801,21 +801,21 @@ class OpenRouterSettings {
 		}
 
 		wp_enqueue_script(
-			'zactonz-ai-connector-openrouter-connector',
+			'zactonz-ai-connector-for-openrouter-connector',
 			plugins_url( 'admin/connector-settings.js', ZCTZ_OPENROUTER_PLUGIN_FILE ),
 			array(),
 			file_exists( $script ) ? (string) filemtime( $script ) : ZCTZ_OPENROUTER_VERSION,
 			true
 		);
 		wp_enqueue_style(
-			'zactonz-ai-connector-openrouter-connector',
+			'zactonz-ai-connector-for-openrouter-connector',
 			plugins_url( 'admin/style-connector-settings.css', ZCTZ_OPENROUTER_PLUGIN_FILE ),
 			array(),
 			file_exists( $style ) ? (string) filemtime( $style ) : ZCTZ_OPENROUTER_VERSION
 		);
 
 		wp_localize_script(
-			'zactonz-ai-connector-openrouter-connector',
+			'zactonz-ai-connector-for-openrouter-connector',
 			'zctzOpenRouterConnector',
 			array(
 				'ajaxUrl'      => esc_url_raw( admin_url( 'admin-ajax.php' ) ),
@@ -828,15 +828,15 @@ class OpenRouterSettings {
 				'strings'      => array(
 					'heading'      => sprintf(
 						/* translators: %s: Provider name. */
-						__( '%s connection', 'zactonz-ai-connector-openrouter' ),
+						__( '%s connection', 'zactonz-ai-connector-for-openrouter' ),
 						OpenRouterProfile::name()
 					),
-					'save'         => __( 'Save and check connection', 'zactonz-ai-connector-openrouter' ),
-					'saving'       => __( 'Checking...', 'zactonz-ai-connector-openrouter' ),
-					'saved'        => __( 'Connection settings saved.', 'zactonz-ai-connector-openrouter' ),
-					'unexpected'   => __( 'WordPress returned an unexpected response.', 'zactonz-ai-connector-openrouter' ),
-					'moreSettings' => __( 'All connector settings', 'zactonz-ai-connector-openrouter' ),
-					'savedValue'   => __( 'A value is saved and hidden', 'zactonz-ai-connector-openrouter' ),
+					'save'         => __( 'Save and check connection', 'zactonz-ai-connector-for-openrouter' ),
+					'saving'       => __( 'Checking...', 'zactonz-ai-connector-for-openrouter' ),
+					'saved'        => __( 'Connection settings saved.', 'zactonz-ai-connector-for-openrouter' ),
+					'unexpected'   => __( 'WordPress returned an unexpected response.', 'zactonz-ai-connector-for-openrouter' ),
+					'moreSettings' => __( 'All connector settings', 'zactonz-ai-connector-for-openrouter' ),
+					'savedValue'   => __( 'A value is saved and hidden', 'zactonz-ai-connector-for-openrouter' ),
 				),
 			)
 		);
@@ -851,7 +851,7 @@ class OpenRouterSettings {
 		check_ajax_referer( self::NONCE_ACTION );
 
 		if ( ! current_user_can( 'manage_options' ) ) {
-			wp_send_json_error( __( 'Insufficient permissions.', 'zactonz-ai-connector-openrouter' ), 403 );
+			wp_send_json_error( __( 'Insufficient permissions.', 'zactonz-ai-connector-for-openrouter' ), 403 );
 		}
 
 		$models = $this->get_models();
@@ -887,7 +887,7 @@ class OpenRouterSettings {
 		check_ajax_referer( self::NONCE_ACTION );
 
 		if ( ! current_user_can( 'manage_options' ) ) {
-			wp_send_json_error( __( 'Insufficient permissions.', 'zactonz-ai-connector-openrouter' ), 403 );
+			wp_send_json_error( __( 'Insufficient permissions.', 'zactonz-ai-connector-for-openrouter' ), 403 );
 		}
 
 		wp_send_json_success( ( new OpenRouterDiagnostics() )->run() );
@@ -902,7 +902,7 @@ class OpenRouterSettings {
 		check_ajax_referer( self::NONCE_ACTION );
 
 		if ( ! current_user_can( 'manage_options' ) ) {
-			wp_send_json_error( __( 'Insufficient permissions.', 'zactonz-ai-connector-openrouter' ), 403 );
+			wp_send_json_error( __( 'Insufficient permissions.', 'zactonz-ai-connector-for-openrouter' ), 403 );
 		}
 
 		$submitted = self::get_settings();
@@ -942,7 +942,7 @@ class OpenRouterSettings {
 				'connected' => true,
 				'message'   => sprintf(
 					/* translators: %s: Provider name. */
-					__( '%s accepted these credentials.', 'zactonz-ai-connector-openrouter' ),
+					__( '%s accepted these credentials.', 'zactonz-ai-connector-for-openrouter' ),
 					OpenRouterProfile::name()
 				),
 			)
@@ -1062,12 +1062,12 @@ class OpenRouterSettings {
 	 */
 	public function get_models() {
 		if ( ! class_exists( AiClient::class ) ) {
-			return new WP_Error( 'ai_client_not_found', __( 'The WordPress AI Client is not available.', 'zactonz-ai-connector-openrouter' ) );
+			return new WP_Error( 'ai_client_not_found', __( 'The WordPress AI Client is not available.', 'zactonz-ai-connector-for-openrouter' ) );
 		}
 
 		$registry = AiClient::defaultRegistry();
 		if ( ! $registry->hasProvider( OpenRouterProfile::id() ) ) {
-			return new WP_Error( 'ai_provider_not_found', __( 'The connector is not registered with the AI Client.', 'zactonz-ai-connector-openrouter' ) );
+			return new WP_Error( 'ai_provider_not_found', __( 'The connector is not registered with the AI Client.', 'zactonz-ai-connector-for-openrouter' ) );
 		}
 
 		if ( ! self::has_credentials() ) {
@@ -1075,7 +1075,7 @@ class OpenRouterSettings {
 				'missing_credentials',
 				sprintf(
 					/* translators: %s: Provider name. */
-					__( 'Add the %s credentials before listing models.', 'zactonz-ai-connector-openrouter' ),
+					__( 'Add the %s credentials before listing models.', 'zactonz-ai-connector-for-openrouter' ),
 					OpenRouterProfile::name()
 				)
 			);
@@ -1091,7 +1091,7 @@ class OpenRouterSettings {
 				'could_not_list_models',
 				sprintf(
 					/* translators: 1: Provider name, 2: Error message. */
-					__( 'Could not list %1$s models. Error: %2$s', 'zactonz-ai-connector-openrouter' ),
+					__( 'Could not list %1$s models. Error: %2$s', 'zactonz-ai-connector-for-openrouter' ),
 					OpenRouterProfile::name(),
 					$e->getMessage()
 				)
@@ -1473,7 +1473,7 @@ class OpenRouterSettings {
 				'missing_credentials',
 				sprintf(
 					/* translators: %s: Provider name. */
-					__( 'Add the %s credentials before checking the connection.', 'zactonz-ai-connector-openrouter' ),
+					__( 'Add the %s credentials before checking the connection.', 'zactonz-ai-connector-for-openrouter' ),
 					OpenRouterProfile::name()
 				)
 			);
@@ -1493,7 +1493,7 @@ class OpenRouterSettings {
 				'request_failed',
 				sprintf(
 					/* translators: 1: Provider name, 2: Error message. */
-					__( 'Could not reach %1$s. Error: %2$s', 'zactonz-ai-connector-openrouter' ),
+					__( 'Could not reach %1$s. Error: %2$s', 'zactonz-ai-connector-for-openrouter' ),
 					OpenRouterProfile::name(),
 					$response->get_error_message()
 				)
@@ -1507,7 +1507,7 @@ class OpenRouterSettings {
 				'invalid_credentials',
 				sprintf(
 					/* translators: %s: Provider name. */
-					__( '%s rejected these credentials.', 'zactonz-ai-connector-openrouter' ),
+					__( '%s rejected these credentials.', 'zactonz-ai-connector-for-openrouter' ),
 					OpenRouterProfile::name()
 				)
 			);
@@ -1518,7 +1518,7 @@ class OpenRouterSettings {
 				'unexpected_status',
 				sprintf(
 					/* translators: 1: Provider name, 2: HTTP status code. */
-					__( '%1$s returned HTTP %2$d while listing models.', 'zactonz-ai-connector-openrouter' ),
+					__( '%1$s returned HTTP %2$d while listing models.', 'zactonz-ai-connector-for-openrouter' ),
 					OpenRouterProfile::name(),
 					$status
 				)
@@ -1531,7 +1531,7 @@ class OpenRouterSettings {
 				'invalid_response',
 				sprintf(
 					/* translators: %s: Provider name. */
-					__( '%s returned an unexpected model list.', 'zactonz-ai-connector-openrouter' ),
+					__( '%s returned an unexpected model list.', 'zactonz-ai-connector-for-openrouter' ),
 					OpenRouterProfile::name()
 				)
 			);

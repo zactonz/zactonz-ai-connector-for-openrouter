@@ -1,7 +1,7 @@
 <?php
 /**
- * Plugin Name:       Zactonz AI Connector: OpenRouter
- * Plugin URI:        https://github.com/zactonz/zactonz-ai-connector-openrouter
+ * Plugin Name:       Zactonz AI Connector for OpenRouter
+ * Plugin URI:        https://developers.zactonz.com/wordpress/plugins/zactonz-ai-connector-for-openrouter/
  * Description:       Adds an OpenRouter connector to Settings > Connectors for the WordPress AI Client, with access to hundreds of routed models.
  * Requires at least: 7.0
  * Requires PHP:      7.4
@@ -10,7 +10,7 @@
  * Author URI:        https://zactonz.com/
  * License:           GPL-2.0-or-later
  * License URI:       https://spdx.org/licenses/GPL-2.0-or-later.html
- * Text Domain:       zactonz-ai-connector-openrouter
+ * Text Domain:       zactonz-ai-connector-for-openrouter
  *
  * @package Zactonz\AiConnectorForOpenRouter
  */
@@ -64,7 +64,7 @@ function zctz_check_php_version(): bool {
 				zctz_requirement_notice(
 					sprintf(
 						/* translators: 1: Required PHP version, 2: Current PHP version */
-						__( 'The Zactonz AI Connector: OpenRouter requires PHP version %1$s or higher. You are running PHP version %2$s.', 'zactonz-ai-connector-openrouter' ),
+						__( 'The Zactonz AI Connector for OpenRouter requires PHP version %1$s or higher. You are running PHP version %2$s.', 'zactonz-ai-connector-for-openrouter' ),
 						ZCTZ_OPENROUTER_MIN_PHP_VERSION,
 						PHP_VERSION
 					)
@@ -96,7 +96,7 @@ function zctz_check_wp_version(): bool {
 				zctz_requirement_notice(
 					sprintf(
 						/* translators: 1: Required WordPress version, 2: Current WordPress version */
-						__( 'The Zactonz AI Connector: OpenRouter requires WordPress version %1$s or higher. You are running WordPress version %2$s.', 'zactonz-ai-connector-openrouter' ),
+						__( 'The Zactonz AI Connector for OpenRouter requires WordPress version %1$s or higher. You are running WordPress version %2$s.', 'zactonz-ai-connector-for-openrouter' ),
 						ZCTZ_OPENROUTER_MIN_WP_VERSION,
 						$wp_version
 					)

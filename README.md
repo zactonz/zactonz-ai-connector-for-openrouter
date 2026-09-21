@@ -1,4 +1,4 @@
-# Zactonz AI Connector: OpenRouter
+# Zactonz AI Connector for OpenRouter
 
 Adds an OpenRouter connector to Settings > Connectors for the WordPress AI Client, with access to hundreds of routed models.
 
@@ -14,8 +14,8 @@ This plugin is part of the Zactonz AI Connector family, a set of sibling plugins
 
 ## Installation
 
-1. Copy this directory to `wp-content/plugins/zactonz-ai-connector-openrouter/`.
-2. Activate **Zactonz AI Connector: OpenRouter** from the Plugins screen.
+1. Copy this directory to `wp-content/plugins/zactonz-ai-connector-for-openrouter/`.
+2. Activate **Zactonz AI Connector for OpenRouter** from the Plugins screen.
 3. Add the API key on **Settings > Connectors**, or on **Settings > OpenRouter**.
 
 ## Configuration

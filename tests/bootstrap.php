@@ -174,7 +174,7 @@ function plugin_basename( $file ) {
 
 function plugins_url( $path = '', $plugin = '' ) {
 	unset( $plugin );
-	return 'https://example.test/wp-content/plugins/zactonz-ai-connector-openrouter/' . ltrim( (string) $path, '/' );
+	return 'https://example.test/wp-content/plugins/zactonz-ai-connector-for-openrouter/' . ltrim( (string) $path, '/' );
 }
 
 function admin_url( $path = '' ) {

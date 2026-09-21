@@ -1,4 +1,4 @@
-=== Zactonz AI Connector: OpenRouter ===
+=== Zactonz AI Connector for OpenRouter ===
 Contributors:      zactonz
 Tags:              connector, openrouter, ai, ai-client, llm
 Requires at least: 7.0
@@ -39,9 +39,17 @@ OpenRouter is a routing gateway that exposes hundreds of models from dozens of l
 * WordPress 7.0 or higher
 * An OpenRouter account and API key
 
+== External services ==
+
+This plugin sends requests to OpenRouter, a third-party service, and does nothing without it. Requests go to the OpenRouter API at `https://openrouter.ai/api/v1`, or to the API base URL you set in the connector settings.
+
+**What is sent and when:** the API key you configure, and the prompts, images, tool definitions and generation settings that a WordPress AI feature passes to the AI Client, each time such a feature runs a request through this connector. The connector also requests the model catalogue when its settings screen loads, when a WordPress AI feature asks which models are available, and when you run diagnostics or the Site Health test. It also sends your site URL and site name in the HTTP-Referer and X-Title headers OpenRouter uses for attribution, so requests appear under your site in the OpenRouter activity view. No other data is sent.
+
+**Service provider:** OpenRouter ([terms of service](https://openrouter.ai/terms), [privacy policy](https://openrouter.ai/privacy)).
+
 == Installation ==
 
-1. Upload the plugin files to `/wp-content/plugins/zactonz-ai-connector-openrouter/`, or install the plugin through the WordPress plugins screen.
+1. Upload the plugin files to `/wp-content/plugins/zactonz-ai-connector-for-openrouter/`, or install the plugin through the WordPress plugins screen.
 2. Activate the plugin through the **Plugins** menu in WordPress.
 3. Go to **Settings > Connectors** and add your OpenRouter API key.
 4. Go to **Settings > OpenRouter** to review the discovered models and choose a default model per capability.

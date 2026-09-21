@@ -49,7 +49,7 @@ class OpenRouterSiteHealth {
 		$tests['direct']['zctz_openrouter_connection'] = array(
 			'label' => sprintf(
 				/* translators: %s: Provider name. */
-				__( '%s connection', 'zactonz-ai-connector-openrouter' ),
+				__( '%s connection', 'zactonz-ai-connector-for-openrouter' ),
 				OpenRouterProfile::name()
 			),
 			'test'  => array( $this, 'test_connection' ),
@@ -73,24 +73,24 @@ class OpenRouterSiteHealth {
 			'label'       => $connected
 				? sprintf(
 					/* translators: %s: Provider name. */
-					__( '%s is connected', 'zactonz-ai-connector-openrouter' ),
+					__( '%s is connected', 'zactonz-ai-connector-for-openrouter' ),
 					OpenRouterProfile::name()
 				)
 				: sprintf(
 					/* translators: %s: Provider name. */
-					__( '%s is not reachable', 'zactonz-ai-connector-openrouter' ),
+					__( '%s is not reachable', 'zactonz-ai-connector-for-openrouter' ),
 					OpenRouterProfile::name()
 				),
 			'status'      => $connected ? 'good' : 'recommended',
 			'badge'       => array(
-				'label' => __( 'AI', 'zactonz-ai-connector-openrouter' ),
+				'label' => __( 'AI', 'zactonz-ai-connector-for-openrouter' ),
 				'color' => 'blue',
 			),
 			'description' => '<p>' . esc_html(
 				$connected
 					? sprintf(
 						/* translators: 1: Number of models, 2: Request latency in milliseconds. */
-						__( 'The connector discovered %1$d models in %2$d ms.', 'zactonz-ai-connector-openrouter' ),
+						__( 'The connector discovered %1$d models in %2$d ms.', 'zactonz-ai-connector-for-openrouter' ),
 						(int) $report['modelCount'],
 						(int) $report['latencyMs']
 					)
@@ -98,11 +98,11 @@ class OpenRouterSiteHealth {
 			) . '</p>',
 			'actions'     => sprintf(
 				'<p><a href="%1$s">%2$s</a></p>',
-				esc_url( admin_url( 'options-general.php?page=zactonz-ai-connector-openrouter' ) ),
+				esc_url( admin_url( 'options-general.php?page=zactonz-ai-connector-for-openrouter' ) ),
 				esc_html(
 					sprintf(
 						/* translators: %s: Provider name. */
-						__( 'Review %s settings', 'zactonz-ai-connector-openrouter' ),
+						__( 'Review %s settings', 'zactonz-ai-connector-for-openrouter' ),
 						OpenRouterProfile::name()
 					)
 				)
@@ -122,17 +122,17 @@ class OpenRouterSiteHealth {
 	public function add_debug_information( array $info ): array {
 		$fields = array(
 			'endpoint'    => array(
-				'label' => __( 'Endpoint', 'zactonz-ai-connector-openrouter' ),
+				'label' => __( 'Endpoint', 'zactonz-ai-connector-for-openrouter' ),
 				'value' => OpenRouterSettings::get_base_url(),
 			),
 			'credentials' => array(
-				'label' => __( 'Credentials stored', 'zactonz-ai-connector-openrouter' ),
+				'label' => __( 'Credentials stored', 'zactonz-ai-connector-for-openrouter' ),
 				'value' => OpenRouterSettings::has_credentials()
-					? __( 'Yes', 'zactonz-ai-connector-openrouter' )
-					: __( 'No', 'zactonz-ai-connector-openrouter' ),
+					? __( 'Yes', 'zactonz-ai-connector-for-openrouter' )
+					: __( 'No', 'zactonz-ai-connector-for-openrouter' ),
 			),
 			'timeout'     => array(
-				'label' => __( 'Text timeout', 'zactonz-ai-connector-openrouter' ),
+				'label' => __( 'Text timeout', 'zactonz-ai-connector-for-openrouter' ),
 				'value' => OpenRouterSettings::get_text_request_timeout() . 's',
 			),
 		);
@@ -141,15 +141,15 @@ class OpenRouterSiteHealth {
 			$fields[ 'default_' . $capability ] = array(
 				'label' => sprintf(
 					/* translators: %s: Capability name. */
-					__( 'Default %s model', 'zactonz-ai-connector-openrouter' ),
+					__( 'Default %s model', 'zactonz-ai-connector-for-openrouter' ),
 					$capability
 				),
-				'value' => '' !== $model_id ? $model_id : __( 'Automatic', 'zactonz-ai-connector-openrouter' ),
+				'value' => '' !== $model_id ? $model_id : __( 'Automatic', 'zactonz-ai-connector-for-openrouter' ),
 			);
 		}
 
 		$info['zctz_openrouter'] = array(
-			'label'  => 'Zactonz AI Connector: OpenRouter',
+			'label'  => 'Zactonz AI Connector for OpenRouter',
 			'fields' => $fields,
 		);
 

@@ -1,6 +1,6 @@
 # Contributing
 
-Thanks for helping improve Zactonz AI Connector: OpenRouter.
+Thanks for helping improve Zactonz AI Connector for OpenRouter.
 
 ## Local Setup
 
