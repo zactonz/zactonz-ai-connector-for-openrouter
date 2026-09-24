@@ -140,8 +140,24 @@ class OpenRouterDiagnostics {
 			'modelCount'      => count( $model_ids ),
 			'missingDefaults' => $missing_defaults,
 			'aiClientVersion' => class_exists( AiClient::class ) ? AiClient::VERSION : '',
-			'streamingReady'  => function_exists( 'curl_init' ),
+			'streamingReady'  => self::supports_incremental_streaming(),
 			'timestamp'       => gmdate( 'c' ),
 		);
+	}
+
+	/**
+	 * Reports whether responses can be delivered token by token.
+	 *
+	 * Streaming rides on the requests-request.progress action, which WordPress has
+	 * bridged from the Requests library since 4.7 and which both bundled transports
+	 * dispatch. Without that bridge a stream still returns the whole, correct
+	 * answer, it just arrives in one piece.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return bool True when incremental delivery is available.
+	 */
+	private static function supports_incremental_streaming(): bool {
+		return class_exists( 'WP_HTTP_Requests_Hooks' );
 	}
 }

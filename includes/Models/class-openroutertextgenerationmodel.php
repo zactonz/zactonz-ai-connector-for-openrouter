@@ -121,8 +121,10 @@ class OpenRouterTextGenerationModel extends AbstractOpenAiCompatibleTextGenerati
 	 * Streams a text response and returns the aggregated result.
 	 *
 	 * The callback receives arrays with a type of content_delta, thinking_delta,
-	 * tool_call_delta, or done. Returning false from the callback cancels the
-	 * transfer and returns the partial result.
+	 * tool_call_delta, or done. Returning false stops delivering events and returns
+	 * the partial result. The HTTP request itself still runs to completion: nothing
+	 * in the HTTP API can abort a response mid-body, and PHP defers an exception
+	 * thrown from a transport callback until the transfer has finished anyway.
 	 *
 	 * @since 1.0.0
 	 *
@@ -133,22 +135,20 @@ class OpenRouterTextGenerationModel extends AbstractOpenAiCompatibleTextGenerati
 	 * @throws ResponseException When the provider returns an unsuccessful response.
 	 */
 	public function generateStreamResult( array $prompt, callable $on_event ): GenerativeAiResult { // phpcs:ignore WordPress.NamingConventions.ValidFunctionName.MethodNameInvalid
-		if ( ! function_exists( 'curl_init' ) ) {
-			// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Exception text is not rendered directly.
-			throw new RuntimeException( 'The PHP cURL extension is required for streaming.' );
-		}
-
 		$params           = $this->stripTransportOptions( $this->prepareGenerateTextParams( $prompt ) );
 		$params           = $this->applyReasoningPreference( $params );
 		$params['stream'] = true;
 
 		$url     = OpenRouterProvider::url( OpenRouterSettings::decorate_path( 'chat/completions', $this->metadata()->getId() ) );
-		$headers = array( 'Content-Type: application/json', 'Accept: text/event-stream' );
+		$headers = array(
+			'Content-Type' => 'application/json',
+			'Accept'       => 'text/event-stream',
+		);
 		foreach ( OpenRouterSettings::get_request_headers() as $name => $value ) {
-			$headers[] = $name . ': ' . $value;
+			$headers[ $name ] = $value;
 		}
 
-		$state       = array(
+		$state    = array(
 			'content'       => '',
 			'thinking'      => '',
 			'finish_reason' => null,
@@ -158,9 +158,9 @@ class OpenRouterTextGenerationModel extends AbstractOpenAiCompatibleTextGenerati
 			'cancelled'     => false,
 			'error'         => null,
 		);
-		$buffer      = '';
-		$raw_body    = '';
-		$status_code = 0;
+		$buffer   = '';
+		$raw_body = '';
+		$streamed = false;
 
 		$process = function ( string $data ) use ( &$state, $on_event ): bool {
 			if ( '[DONE]' === trim( $data ) ) {
@@ -260,68 +260,94 @@ class OpenRouterTextGenerationModel extends AbstractOpenAiCompatibleTextGenerati
 			return true;
 		};
 
-		// phpcs:ignore WordPress.WP.AlternativeFunctions.curl_curl_init -- WordPress HTTP does not expose chunk callbacks.
-		$curl = curl_init( $url );
-		if ( false === $curl ) {
-			// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Exception text is not rendered directly.
-			throw new RuntimeException( 'Could not initialize cURL for streaming.' );
+		$consume = function ( string $chunk ) use ( &$buffer, &$raw_body, &$state, $process ): bool {
+			$raw_body .= $chunk;
+			$buffer   .= str_replace( "\r\n", "\n", $chunk );
+
+			while ( true ) {
+				$separator = strpos( $buffer, "\n\n" );
+				if ( false === $separator ) {
+					break;
+				}
+
+				$block  = substr( $buffer, 0, $separator );
+				$buffer = substr( $buffer, $separator + 2 );
+				$lines  = array();
+
+				foreach ( explode( "\n", $block ) as $line ) {
+					if ( 0 === strpos( $line, 'data:' ) ) {
+						$lines[] = ltrim( substr( $line, 5 ) );
+					}
+				}
+
+				if ( ! empty( $lines ) && ! $process( implode( "\n", $lines ) ) ) {
+					return false;
+				}
+			}
+
+			return ! $state['cancelled'] && null === $state['error'];
+		};
+
+		/*
+		 * WordPress forwards every Requests hook to an action named requests-<hook>,
+		 * and both bundled transports dispatch request.progress with each block of
+		 * the body as it arrives. So the request stays an ordinary wp_remote_post()
+		 * and the chunks come back through a WordPress action, with no transport
+		 * code of our own.
+		 */
+		$progress = function ( $chunk ) use ( $consume, &$streamed ): void {
+			$streamed = true;
+
+			if ( ! $consume( (string) $chunk ) ) {
+				throw new OpenRouterStreamCancellation();
+			}
+		};
+
+		add_action( 'requests-request.progress', $progress, 10, 1 );
+
+		try {
+			$response = wp_remote_post(
+				$url,
+				array(
+					'headers'     => $headers,
+					'body'        => wp_json_encode( $params ),
+					'timeout'     => (int) ceil( OpenRouterSettings::get_text_request_timeout() ),
+					'redirection' => 0,
+					'httpversion' => '1.1',
+				)
+			);
+		} catch ( OpenRouterStreamCancellation $cancellation ) {
+			$response = null;
+		} finally {
+			remove_action( 'requests-request.progress', $progress, 10 );
 		}
-
-		// phpcs:ignore WordPress.WP.AlternativeFunctions.curl_curl_setopt_array -- Required for true incremental streaming.
-		curl_setopt_array(
-			$curl,
-			array(
-				CURLOPT_CONNECTTIMEOUT => 10,
-				CURLOPT_FOLLOWLOCATION => false,
-				CURLOPT_HTTPHEADER     => $headers,
-				CURLOPT_POST           => true,
-				CURLOPT_POSTFIELDS     => wp_json_encode( $params ),
-				CURLOPT_TIMEOUT        => (int) ceil( OpenRouterSettings::get_text_request_timeout() ),
-				CURLOPT_WRITEFUNCTION  => function ( $handle, string $chunk ) use ( &$buffer, &$raw_body, &$state, $process ): int {
-					unset( $handle );
-					$raw_body .= $chunk;
-					$buffer   .= str_replace( "\r\n", "\n", $chunk );
-					while ( true ) {
-						$separator = strpos( $buffer, "\n\n" );
-						if ( false === $separator ) {
-							break;
-						}
-						$block  = substr( $buffer, 0, $separator );
-						$buffer = substr( $buffer, $separator + 2 );
-						$lines  = array();
-						foreach ( explode( "\n", $block ) as $line ) {
-							if ( 0 === strpos( $line, 'data:' ) ) {
-								$lines[] = ltrim( substr( $line, 5 ) );
-							}
-						}
-						if ( ! empty( $lines ) && ! $process( implode( "\n", $lines ) ) ) {
-							return 0;
-						}
-					}
-					return ( $state['cancelled'] || null !== $state['error'] ) ? 0 : strlen( $chunk );
-				},
-				CURLOPT_HEADERFUNCTION => function ( $handle, string $header ) use ( &$status_code ): int {
-					unset( $handle );
-					if ( preg_match( '#^HTTP/\S+\s+(\d{3})#', $header, $matches ) ) {
-						$status_code = (int) $matches[1];
-					}
-					return strlen( $header );
-				},
-			)
-		);
-
-		// phpcs:ignore WordPress.WP.AlternativeFunctions.curl_curl_exec -- WordPress HTTP buffers responses and cannot stream chunks.
-		$success = curl_exec( $curl );
-		// phpcs:ignore WordPress.WP.AlternativeFunctions.curl_curl_error -- Paired with the streaming request above.
-		$curl_error = curl_error( $curl );
 
 		// phpcs:disable WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Exception text is not rendered directly.
 		if ( $state['error'] instanceof \Throwable ) {
 			throw new RuntimeException( 'The stream callback failed: ' . $state['error']->getMessage(), 0, $state['error'] );
 		}
-		if ( false === $success && ! $state['cancelled'] ) {
-			throw new RuntimeException( 'The streaming request failed: ' . $curl_error );
+
+		if ( null === $response ) {
+			$status_code = 200;
+		} elseif ( is_wp_error( $response ) ) {
+			if ( ! $state['cancelled'] ) {
+				throw new RuntimeException( 'The streaming request failed: ' . $response->get_error_message() );
+			}
+
+			$status_code = 200;
+		} else {
+			$status_code = (int) wp_remote_retrieve_response_code( $response );
+
+			if ( ! $streamed ) {
+				/*
+				 * No cURL transport, so nothing streamed. The response is complete and
+				 * correct, it simply arrived in one piece, so replay it through the same
+				 * parser and the caller still sees every event.
+				 */
+				$consume( (string) wp_remote_retrieve_body( $response ) );
+			}
 		}
+
 		if ( ! $state['cancelled'] && ( $status_code < 200 || $status_code >= 300 ) ) {
 			$decoded = json_decode( $raw_body, true );
 			$message = is_array( $decoded ) && isset( $decoded['error']['message'] )

@@ -154,6 +154,40 @@ function add_filter( $hook, $callback, $priority = 10, $accepted_args = 1 ) {
 	return add_action( $hook, $callback, $priority, $accepted_args );
 }
 
+function remove_action( $hook, $callback, $priority = 10 ) {
+	foreach ( $GLOBALS['zctz_test_hooks'][ $hook ] ?? array() as $index => $registered ) {
+		if ( $registered[0] === $callback && $registered[1] === $priority ) {
+			unset( $GLOBALS['zctz_test_hooks'][ $hook ][ $index ] );
+		}
+	}
+
+	return true;
+}
+
+function remove_filter( $hook, $callback, $priority = 10 ) {
+	return remove_action( $hook, $callback, $priority );
+}
+
+function wp_generate_uuid4() {
+	return sprintf(
+		'%04x%04x-%04x-%04x-%04x-%04x%04x%04x',
+		wp_rand( 0, 0xffff ),
+		wp_rand( 0, 0xffff ),
+		wp_rand( 0, 0xffff ),
+		wp_rand( 0, 0x0fff ) | 0x4000,
+		wp_rand( 0, 0x3fff ) | 0x8000,
+		wp_rand( 0, 0xffff ),
+		wp_rand( 0, 0xffff ),
+		wp_rand( 0, 0xffff )
+	);
+}
+
+if ( ! function_exists( 'wp_rand' ) ) {
+	function wp_rand( $min = 0, $max = 0 ) {
+		return random_int( $min, $max );
+	}
+}
+
 function apply_filters( $hook, $value ) {
 	$arguments = array_slice( func_get_args(), 2 );
 
@@ -325,8 +359,80 @@ function zctz_test_queue_http_response( $body, $code = 200 ) {
 	);
 }
 
+/**
+ * Stands in for the HTTP API's transport layer.
+ *
+ * Requests dispatches request.progress with each block of the body, and WordPress
+ * forwards it as the requests-request.progress action. Mirroring that here is what
+ * keeps the streaming tests honest: they drive the same code path a real site
+ * takes, against a real socket, and an exception thrown by a listener really does
+ * abort the transfer.
+ */
+function zctz_test_curl_transport( $url, array $args ) {
+	$handle  = curl_init( $url );
+	$status  = 0;
+	$body    = '';
+	$headers = array();
+
+	foreach ( (array) ( $args['headers'] ?? array() ) as $name => $value ) {
+		$headers[] = $name . ': ' . $value;
+	}
+
+	curl_setopt_array(
+		$handle,
+		array(
+			CURLOPT_POST           => true,
+			CURLOPT_POSTFIELDS     => $args['body'] ?? '',
+			CURLOPT_HTTPHEADER     => $headers,
+			CURLOPT_FOLLOWLOCATION => false,
+			CURLOPT_CONNECTTIMEOUT => 10,
+			CURLOPT_TIMEOUT        => (int) ( $args['timeout'] ?? 30 ),
+			CURLOPT_HEADERFUNCTION => function ( $curl_handle, $header ) use ( &$status ) {
+				unset( $curl_handle );
+				if ( preg_match( '#^HTTP/\S+\s+(\d{3})#', $header, $matches ) ) {
+					$status = (int) $matches[1];
+				}
+				return strlen( $header );
+			},
+			CURLOPT_WRITEFUNCTION  => function ( $curl_handle, $chunk ) use ( &$body ) {
+				unset( $curl_handle );
+				zctz_test_dispatch_progress( $chunk );
+				$body .= $chunk;
+				return strlen( $chunk );
+			},
+		)
+	);
+
+	$result = curl_exec( $handle );
+	$error  = curl_error( $handle );
+	unset( $result );
+
+	if ( '' !== $error ) {
+		return new WP_Error( 'http_request_failed', $error );
+	}
+
+	return array(
+		'response' => array( 'code' => $status ),
+		'body'     => $body,
+	);
+}
+
+function zctz_test_dispatch_progress( $chunk ) {
+	foreach ( $GLOBALS['zctz_test_hooks']['requests-request.progress'] ?? array() as $registered ) {
+		$registered[0]( $chunk, 0, false );
+	}
+}
+
+function zctz_test_is_streaming() {
+	return ! empty( $GLOBALS['zctz_test_hooks']['requests-request.progress'] );
+}
+
 function wp_remote_request( $url, $args = array() ) {
 	$GLOBALS['zctz_test_http_requests'][] = array( 'url' => $url, 'args' => $args );
+
+	if ( zctz_test_is_streaming() && empty( $GLOBALS['zctz_test_http_responses'] ) ) {
+		return zctz_test_curl_transport( $url, $args );
+	}
 
 	if ( empty( $GLOBALS['zctz_test_http_responses'] ) ) {
 		return new WP_Error( 'no_response', 'No test HTTP response was queued.' );
