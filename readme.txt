@@ -87,6 +87,7 @@ No. The key is stored in its own option, is never rendered back into the setting
 = 1.0.0 =
 
 * Initial release.
+* Streams text responses token by token through the WordPress HTTP API, aggregating content, reasoning, tool calls, and usage.
 
 == Upgrade Notice ==
 
