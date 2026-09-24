@@ -154,6 +154,32 @@ class StreamingTest extends TestCase {
 		$this->model( 'error-model' )->generateStreamResult( $this->prompt(), static function (): void {} );
 	}
 
+	public function test_the_trailing_block_is_parsed(): void {
+		$result = $this->model( 'trailing-model' )->generateStreamResult(
+			$this->prompt(),
+			static function (): bool {
+				return true;
+			}
+		);
+
+		$this->assertSame( 'Partial tail.', $result->toText() );
+	}
+
+	public function test_a_throwing_callback_in_the_trailing_block_is_reported(): void {
+		$this->expectException( RuntimeException::class );
+
+		$this->model( 'trailing-model' )->generateStreamResult(
+			$this->prompt(),
+			static function ( array $event ): bool {
+				if ( 'content_delta' === $event['type'] && 'tail.' === $event['delta'] ) {
+					throw new \LogicException( 'callback failed on the last block' );
+				}
+
+				return true;
+			}
+		);
+	}
+
 	public function test_a_throwing_callback_is_reported(): void {
 		$this->expectException( RuntimeException::class );
 

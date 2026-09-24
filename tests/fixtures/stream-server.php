@@ -93,6 +93,24 @@ if ( 'tool-model' === $model ) {
 	);
 }
 
+if ( 'trailing-model' === $model ) {
+	// Ends without the blank line that closes an SSE block, so the last event is
+	// left in the parser's buffer and only the trailing-block path will see it.
+	echo 'data: ' . json_encode(
+		array(
+			'id'      => 'trailing-stream',
+			'choices' => array( array( 'delta' => array( 'content' => 'Partial ' ), 'finish_reason' => null ) ),
+		)
+	) . "\n\n";
+	echo 'data: ' . json_encode(
+		array(
+			'id'      => 'trailing-stream',
+			'choices' => array( array( 'delta' => array( 'content' => 'tail.' ), 'finish_reason' => 'stop' ) ),
+		)
+	);
+	return;
+}
+
 foreach ( $chunks as $chunk ) {
 	echo 'data: ' . json_encode( $chunk ) . "\n\n";
 }

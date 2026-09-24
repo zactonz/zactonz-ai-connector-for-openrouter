@@ -161,6 +161,7 @@ class OpenRouterTextGenerationModel extends AbstractOpenAiCompatibleTextGenerati
 		$buffer   = '';
 		$raw_body = '';
 		$streamed = false;
+		$halted   = false;
 
 		$process = function ( string $data ) use ( &$state, $on_event ): bool {
 			if ( '[DONE]' === trim( $data ) ) {
@@ -295,10 +296,12 @@ class OpenRouterTextGenerationModel extends AbstractOpenAiCompatibleTextGenerati
 		 * and the chunks come back through a WordPress action, with no transport
 		 * code of our own.
 		 */
-		$progress = function ( $chunk ) use ( $consume, &$streamed ): void {
+		$progress = function ( $chunk ) use ( $consume, &$streamed, &$halted ): void {
 			$streamed = true;
 
 			if ( ! $consume( (string) $chunk ) ) {
+				$halted = true;
+
 				throw new OpenRouterStreamCancellation();
 			}
 		};
@@ -323,10 +326,6 @@ class OpenRouterTextGenerationModel extends AbstractOpenAiCompatibleTextGenerati
 		}
 
 		// phpcs:disable WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Exception text is not rendered directly.
-		if ( $state['error'] instanceof \Throwable ) {
-			throw new RuntimeException( 'The stream callback failed: ' . $state['error']->getMessage(), 0, $state['error'] );
-		}
-
 		if ( null === $response ) {
 			$status_code = 200;
 		} elseif ( is_wp_error( $response ) ) {
@@ -344,7 +343,7 @@ class OpenRouterTextGenerationModel extends AbstractOpenAiCompatibleTextGenerati
 				 * correct, it simply arrived in one piece, so replay it through the same
 				 * parser and the caller still sees every event.
 				 */
-				$consume( (string) wp_remote_retrieve_body( $response ) );
+				$halted = ! $consume( (string) wp_remote_retrieve_body( $response ) );
 			}
 		}
 
@@ -362,11 +361,25 @@ class OpenRouterTextGenerationModel extends AbstractOpenAiCompatibleTextGenerati
 		}
 		// phpcs:enable WordPress.Security.EscapeOutput.ExceptionNotEscaped
 
-		if ( '' !== trim( $buffer ) ) {
+		/*
+		 * A stream can end without the blank line that closes its last block, leaving
+		 * one event in the buffer. Parse it, unless the caller has already cancelled
+		 * or its callback has already thrown.
+		 */
+		if ( '' !== trim( $buffer ) && ! $halted ) {
 			$trailing = preg_replace( '/^data:\s*/m', '', trim( $buffer ) );
 			if ( is_string( $trailing ) ) {
 				$process( $trailing );
 			}
+		}
+
+		/*
+		 * Checked once, here, because the caller's callback runs on every path above:
+		 * during the stream, during a replayed body, and on the trailing block.
+		 */
+		if ( $state['error'] instanceof \Throwable ) {
+			// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Exception text is not rendered directly.
+			throw new RuntimeException( 'The stream callback failed: ' . $state['error']->getMessage(), 0, $state['error'] );
 		}
 
 		ksort( $state['tool_calls'] );
