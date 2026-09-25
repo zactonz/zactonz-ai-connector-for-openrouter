@@ -190,4 +190,15 @@ class StreamingTest extends TestCase {
 			}
 		);
 	}
+
+	public function test_the_stream_asks_the_provider_to_include_usage(): void {
+		$result = $this->model( 'echo-options-model' )->generateStreamResult(
+			$this->prompt(),
+			static function ( array $event ): void {
+				unset( $event );
+			}
+		);
+
+		$this->assertSame( '{"include_usage":true}', $result->toText() );
+	}
 }

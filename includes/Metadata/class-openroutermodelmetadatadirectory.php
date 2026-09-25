@@ -357,11 +357,20 @@ class OpenRouterModelMetadataDirectory extends AbstractApiBasedModelMetadataDire
 			if ( ! isset( $entry['context_length'] ) && isset( $routed['context_length'] ) ) {
 				$entry['context_length'] = $routed['context_length'];
 			}
+
+			$capabilities = isset( $entry['capabilities'] ) && is_array( $entry['capabilities'] )
+				? $entry['capabilities']
+				: array();
+
 			if ( isset( $routed['supports_tools'] ) ) {
-				$entry['capabilities']['function_calling'] = (bool) $routed['supports_tools'];
+				$capabilities['function_calling'] = (bool) $routed['supports_tools'];
 			}
 			if ( isset( $routed['supports_structured_output'] ) ) {
-				$entry['capabilities']['structured_output'] = (bool) $routed['supports_structured_output'];
+				$capabilities['structured_output'] = (bool) $routed['supports_structured_output'];
+			}
+
+			if ( array() !== $capabilities ) {
+				$entry['capabilities'] = $capabilities;
 			}
 
 			break;
@@ -607,7 +616,14 @@ class OpenRouterModelMetadataDirectory extends AbstractApiBasedModelMetadataDire
 	}
 
 	/**
-	 * Sorts the discovered models and moves the configured default first.
+	 * Sorts the discovered models and moves the configured defaults first.
+	 *
+	 * Listing order is how a provider expresses a preference to the AI Client:
+	 * asked for a capability, the client filters this list to the models that
+	 * support it and takes the first one left. Each configured default therefore
+	 * goes to the front, most specific capability last, so that the text default
+	 * leads a plain text request while a request that needs vision, images or
+	 * embeddings still reaches the default chosen for it.
 	 *
 	 * @since 1.0.0
 	 *
@@ -617,15 +633,23 @@ class OpenRouterModelMetadataDirectory extends AbstractApiBasedModelMetadataDire
 	private function sort_models_map( array $models_map ): array {
 		ksort( $models_map );
 
-		$preferred = OpenRouterSettings::get_preferred_model( 'text' );
-		if ( '' !== $preferred && isset( $models_map[ $preferred ] ) ) {
-			$models_map = array( $preferred => $models_map[ $preferred ] ) + array_diff_key(
-				$models_map,
-				array( $preferred => true )
-			);
+		$leading = array();
+
+		foreach ( array( 'embedding', 'image', 'vision', 'tools', 'text' ) as $capability ) {
+			$preferred = OpenRouterSettings::get_preferred_model( $capability );
+
+			if ( '' === $preferred || ! isset( $models_map[ $preferred ] ) ) {
+				continue;
+			}
+
+			$leading = array( $preferred => $models_map[ $preferred ] ) + $leading;
 		}
 
-		return $models_map;
+		if ( array() === $leading ) {
+			return $models_map;
+		}
+
+		return $leading + array_diff_key( $models_map, $leading );
 	}
 
 	/**

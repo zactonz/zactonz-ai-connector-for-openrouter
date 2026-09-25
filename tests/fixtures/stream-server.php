@@ -16,6 +16,24 @@ if ( 'error-model' === $model ) {
 header( 'Content-Type: text/event-stream' );
 header( 'Cache-Control: no-cache' );
 
+if ( 'echo-options-model' === $model ) {
+	$echo = isset( $request['stream_options'] ) ? $request['stream_options'] : null;
+	echo 'data: ', json_encode(
+		array(
+			'id'      => 'echo',
+			'choices' => array( array( 'delta' => array( 'content' => json_encode( $echo ) ) ) ),
+		)
+	), "\n\n";
+	echo 'data: ', json_encode(
+		array(
+			'id'      => 'echo',
+			'choices' => array( array( 'delta' => new stdClass(), 'finish_reason' => 'stop' ) ),
+		)
+	), "\n\n";
+	echo "data: [DONE]\n\n";
+	return;
+}
+
 if ( 'tool-model' === $model ) {
 	$chunks = array(
 		array(

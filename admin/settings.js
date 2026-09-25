@@ -31,13 +31,13 @@
 
 	function featureLabels( features ) {
 		var labels = {
-			text: 'Text',
-			vision: 'Vision',
-			tools: 'Tools',
-			structured: 'JSON',
-			reasoning: 'Reasoning',
-			embedding: 'Embeddings',
-			image: 'Images'
+			text: text( 'featureText', 'Text' ),
+			vision: text( 'featureVision', 'Vision' ),
+			tools: text( 'featureTools', 'Tools' ),
+			structured: text( 'featureStructured', 'JSON' ),
+			reasoning: text( 'featureReasoning', 'Reasoning' ),
+			embedding: text( 'featureEmbedding', 'Embeddings' ),
+			image: text( 'featureImage', 'Images' )
 		};
 
 		return Object.keys( labels ).filter( function ( key ) {

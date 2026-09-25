@@ -23,6 +23,8 @@ use Zactonz\AiConnectorForOpenRouter\Settings\OpenRouterSettings;
  */
 class OpenRouterSiteHealth {
 
+	private const TEST_SLUG = 'zctz-openrouter-connection';
+
 	/**
 	 * Registers hooks.
 	 *
@@ -31,6 +33,7 @@ class OpenRouterSiteHealth {
 	public function init(): void {
 		add_filter( 'site_status_tests', array( $this, 'register_tests' ) );
 		add_filter( 'debug_information', array( $this, 'add_debug_information' ) );
+		add_action( 'wp_ajax_health-check-' . self::TEST_SLUG, array( $this, 'ajax_test_connection' ) );
 	}
 
 	/**
@@ -46,16 +49,38 @@ class OpenRouterSiteHealth {
 			return $tests;
 		}
 
-		$tests['direct']['zctz_openrouter_connection'] = array(
-			'label' => sprintf(
+		$tests['async']['zctz_openrouter_connection'] = array(
+			'label'             => sprintf(
 				/* translators: %s: Provider name. */
 				__( '%s connection', 'zactonz-ai-connector-for-openrouter' ),
 				OpenRouterProfile::name()
 			),
-			'test'  => array( $this, 'test_connection' ),
+			'test'              => self::TEST_SLUG,
+			'has_rest'          => false,
+			'async_direct_test' => array( $this, 'test_connection' ),
 		);
 
 		return $tests;
+	}
+
+	/**
+	 * Runs the connection test for the Site Health screen.
+	 *
+	 * The test reaches the provider over the network, so it is registered as
+	 * asynchronous and answered here instead of during the page render. A direct
+	 * test would hold the Site Health screen open for the length of the request,
+	 * up to the request timeout when the provider cannot be reached.
+	 *
+	 * @since 1.0.0
+	 */
+	public function ajax_test_connection(): void {
+		check_ajax_referer( 'health-check-site-status' );
+
+		if ( ! current_user_can( 'view_site_health_checks' ) ) {
+			wp_send_json_error();
+		}
+
+		wp_send_json_success( $this->test_connection() );
 	}
 
 	/**

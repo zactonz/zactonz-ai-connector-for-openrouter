@@ -139,6 +139,14 @@ class OpenRouterTextGenerationModel extends AbstractOpenAiCompatibleTextGenerati
 		$params           = $this->applyReasoningPreference( $params );
 		$params['stream'] = true;
 
+		/*
+		 * An OpenAI-compatible stream omits the usage block unless it is asked for,
+		 * so without this the aggregated result reports no tokens at all.
+		 */
+		if ( ! isset( $params['stream_options'] ) ) {
+			$params['stream_options'] = array( 'include_usage' => true );
+		}
+
 		$url     = OpenRouterProvider::url( OpenRouterSettings::decorate_path( 'chat/completions', $this->metadata()->getId() ) );
 		$headers = array(
 			'Content-Type' => 'application/json',

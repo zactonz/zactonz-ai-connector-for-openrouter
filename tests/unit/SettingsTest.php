@@ -144,4 +144,53 @@ class SettingsTest extends TestCase {
 		$this->assertSame( OpenRouterSettings::get_models_url(), $request['url'] );
 		$this->assertArrayHasKey( OpenRouterProfile::auth_header(), $request['args']['headers'] );
 	}
+
+	public function test_the_api_key_lives_in_the_option_wordpress_registers_for_the_connector(): void {
+		$expected = 'connectors_ai_' . str_replace( '-', '_', OpenRouterProfile::id() ) . '_api_key';
+
+		$this->assertSame( $expected, OpenRouterSettings::api_key_option() );
+	}
+
+	public function test_a_key_entered_on_the_core_connectors_screen_is_used(): void {
+		// Seeds whatever else this provider needs, so the assertion below is about
+		// the key being read from core's option and nothing else.
+		zctz_test_seed_settings();
+		$GLOBALS['zctz_test_options'][ OpenRouterSettings::api_key_option() ] = 'key-from-core-screen';
+
+		$this->assertSame( 'key-from-core-screen', OpenRouterSettings::get_api_key() );
+		$this->assertTrue( OpenRouterSettings::has_credentials() );
+	}
+
+	public function test_saving_on_the_connector_screen_writes_the_key_core_reads(): void {
+		$settings = new OpenRouterSettings();
+		$settings->sanitize_settings( array( 'api_key' => 'key-from-plugin-screen' ) );
+
+		$this->assertSame(
+			'key-from-plugin-screen',
+			$GLOBALS['zctz_test_options'][ OpenRouterSettings::api_key_option() ]
+		);
+	}
+
+	public function test_clearing_the_key_clears_the_option_core_reads(): void {
+		$settings = new OpenRouterSettings();
+		$settings->sanitize_settings( array( 'api_key' => 'key-to-remove' ) );
+		$settings->sanitize_settings( array( 'clear_api_key' => '1' ) );
+
+		$this->assertSame( '', OpenRouterSettings::get_api_key() );
+		$this->assertFalse( OpenRouterSettings::has_credentials() );
+	}
+
+	public function test_no_second_copy_of_the_key_is_stored(): void {
+		$settings = new OpenRouterSettings();
+		$settings->sanitize_settings( array( 'api_key' => 'only-one-copy' ) );
+
+		$holders = array();
+		foreach ( $GLOBALS['zctz_test_options'] as $name => $value ) {
+			if ( is_string( $value ) && 'only-one-copy' === $value ) {
+				$holders[] = $name;
+			}
+		}
+
+		$this->assertSame( array( OpenRouterSettings::api_key_option() ), $holders );
+	}
 }

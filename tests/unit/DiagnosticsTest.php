@@ -72,11 +72,26 @@ class DiagnosticsTest extends TestCase {
 	public function test_site_health_only_registers_when_credentials_exist(): void {
 		$health = new OpenRouterSiteHealth();
 
-		$this->assertArrayNotHasKey( 'zctz_openrouter_connection', $health->register_tests( array() )['direct'] ?? array() );
+		$this->assertArrayNotHasKey( 'zctz_openrouter_connection', $health->register_tests( array() )['async'] ?? array() );
 
 		zctz_test_seed_settings();
 
-		$this->assertArrayHasKey( 'zctz_openrouter_connection', $health->register_tests( array() )['direct'] );
+		$this->assertArrayHasKey( 'zctz_openrouter_connection', $health->register_tests( array() )['async'] );
+	}
+
+	public function test_site_health_connection_test_is_asynchronous(): void {
+		zctz_test_seed_settings();
+
+		$tests = ( new OpenRouterSiteHealth() )->register_tests( array() );
+
+		$this->assertArrayNotHasKey( 'zctz_openrouter_connection', $tests['direct'] ?? array() );
+
+		$test = $tests['async']['zctz_openrouter_connection'];
+
+		$this->assertSame( 'zctz-openrouter-connection', $test['test'] );
+		$this->assertFalse( $test['has_rest'] );
+		$this->assertIsCallable( $test['async_direct_test'] );
+		$this->assertStringNotContainsString( '_', $test['test'] );
 	}
 
 	public function test_site_health_debug_information_hides_the_credential(): void {

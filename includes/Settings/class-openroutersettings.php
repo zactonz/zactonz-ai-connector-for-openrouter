@@ -29,7 +29,6 @@ class OpenRouterSettings {
 
 	private const OPTION_GROUP     = 'zctz_openrouter_settings';
 	private const OPTION_NAME      = 'zctz_openrouter_settings';
-	private const API_KEY_OPTION   = 'zctz_openrouter_api_key';
 	private const SECRET_PREFIX    = 'zctz_openrouter_secret_';
 	private const PAGE_SLUG        = 'zactonz-ai-connector-for-openrouter';
 	private const SECTION_MAIN     = 'zctz_openrouter_main';
@@ -80,13 +79,6 @@ class OpenRouterSettings {
 		add_action( 'wp_ajax_' . self::AJAX_MODELS, array( $this, 'ajax_list_models' ) );
 		add_action( 'wp_ajax_' . self::AJAX_DIAGNOSTICS, array( $this, 'ajax_diagnostics' ) );
 		add_action( 'wp_ajax_' . self::AJAX_CONNECTION, array( $this, 'ajax_save_connection' ) );
-		add_filter( 'wpai_has_ai_credentials', array( $this, 'filter_has_credentials' ) );
-		add_filter( 'wpai_is_' . OpenRouterProfile::id() . '_connector_configured', array( $this, 'filter_has_credentials' ) );
-		add_filter( 'wpai_preferred_text_models', array( $this, 'prepend_text_model' ) );
-		add_filter( 'wpai_preferred_image_models', array( $this, 'prepend_image_model' ) );
-		add_filter( 'wpai_preferred_vision_models', array( $this, 'prepend_vision_model' ) );
-		add_filter( 'wpai_preferred_embedding_models', array( $this, 'prepend_embedding_model' ) );
-		add_filter( 'wpai_preferred_tool_models', array( $this, 'prepend_tools_model' ) );
 	}
 
 	/**
@@ -748,22 +740,29 @@ class OpenRouterSettings {
 				),
 				'providerName'   => OpenRouterProfile::name(),
 				'strings'        => array(
-					'loadingModels'   => __( 'Loading models...', 'zactonz-ai-connector-for-openrouter' ),
-					'noModels'        => __( 'No models were returned for this API key.', 'zactonz-ai-connector-for-openrouter' ),
-					'modelsFailed'    => __( 'Could not load models.', 'zactonz-ai-connector-for-openrouter' ),
-					'automatic'       => __( 'Automatic', 'zactonz-ai-connector-for-openrouter' ),
-					'running'         => __( 'Running diagnostics...', 'zactonz-ai-connector-for-openrouter' ),
-					'connected'       => __( 'Connected', 'zactonz-ai-connector-for-openrouter' ),
-					'notConnected'    => __( 'Not connected', 'zactonz-ai-connector-for-openrouter' ),
-					'endpoint'        => __( 'Endpoint', 'zactonz-ai-connector-for-openrouter' ),
-					'latency'         => __( 'Latency', 'zactonz-ai-connector-for-openrouter' ),
-					'modelCount'      => __( 'Models discovered', 'zactonz-ai-connector-for-openrouter' ),
-					'missingDefaults' => __( 'Defaults not found in the model list', 'zactonz-ai-connector-for-openrouter' ),
-					'aiClient'        => __( 'AI Client version', 'zactonz-ai-connector-for-openrouter' ),
-					'reasoningYes'    => __( 'This default model reports reasoning support.', 'zactonz-ai-connector-for-openrouter' ),
-					'reasoningNo'     => __( 'This default model does not report reasoning support.', 'zactonz-ai-connector-for-openrouter' ),
-					'reasoningPick'   => __( 'Choose a default text model to see whether it supports reasoning.', 'zactonz-ai-connector-for-openrouter' ),
-					'context'         => __( 'context', 'zactonz-ai-connector-for-openrouter' ),
+					'loadingModels'     => __( 'Loading models...', 'zactonz-ai-connector-for-openrouter' ),
+					'noModels'          => __( 'No models were returned for this API key.', 'zactonz-ai-connector-for-openrouter' ),
+					'modelsFailed'      => __( 'Could not load models.', 'zactonz-ai-connector-for-openrouter' ),
+					'automatic'         => __( 'Automatic', 'zactonz-ai-connector-for-openrouter' ),
+					'running'           => __( 'Running diagnostics...', 'zactonz-ai-connector-for-openrouter' ),
+					'connected'         => __( 'Connected', 'zactonz-ai-connector-for-openrouter' ),
+					'notConnected'      => __( 'Not connected', 'zactonz-ai-connector-for-openrouter' ),
+					'endpoint'          => __( 'Endpoint', 'zactonz-ai-connector-for-openrouter' ),
+					'latency'           => __( 'Latency', 'zactonz-ai-connector-for-openrouter' ),
+					'modelCount'        => __( 'Models discovered', 'zactonz-ai-connector-for-openrouter' ),
+					'missingDefaults'   => __( 'Defaults not found in the model list', 'zactonz-ai-connector-for-openrouter' ),
+					'aiClient'          => __( 'AI Client version', 'zactonz-ai-connector-for-openrouter' ),
+					'reasoningYes'      => __( 'This default model reports reasoning support.', 'zactonz-ai-connector-for-openrouter' ),
+					'reasoningNo'       => __( 'This default model does not report reasoning support.', 'zactonz-ai-connector-for-openrouter' ),
+					'reasoningPick'     => __( 'Choose a default text model to see whether it supports reasoning.', 'zactonz-ai-connector-for-openrouter' ),
+					'context'           => __( 'context', 'zactonz-ai-connector-for-openrouter' ),
+					'featureText'       => __( 'Text', 'zactonz-ai-connector-for-openrouter' ),
+					'featureVision'     => __( 'Vision', 'zactonz-ai-connector-for-openrouter' ),
+					'featureTools'      => __( 'Tools', 'zactonz-ai-connector-for-openrouter' ),
+					'featureStructured' => __( 'JSON', 'zactonz-ai-connector-for-openrouter' ),
+					'featureReasoning'  => __( 'Reasoning', 'zactonz-ai-connector-for-openrouter' ),
+					'featureEmbedding'  => __( 'Embeddings', 'zactonz-ai-connector-for-openrouter' ),
+					'featureImage'      => __( 'Images', 'zactonz-ai-connector-for-openrouter' ),
 				),
 			)
 		);
@@ -837,6 +836,7 @@ class OpenRouterSettings {
 					'unexpected'   => __( 'WordPress returned an unexpected response.', 'zactonz-ai-connector-for-openrouter' ),
 					'moreSettings' => __( 'All connector settings', 'zactonz-ai-connector-for-openrouter' ),
 					'savedValue'   => __( 'A value is saved and hidden', 'zactonz-ai-connector-for-openrouter' ),
+					'apiKey'       => __( 'API key', 'zactonz-ai-connector-for-openrouter' ),
 				),
 			)
 		);
@@ -950,110 +950,6 @@ class OpenRouterSettings {
 	}
 
 	/**
-	 * Reports whether the connector holds credentials, for the AI credential filters.
-	 *
-	 * @since 1.0.0
-	 *
-	 * @param mixed $has_credentials Value provided by earlier filters.
-	 * @return bool True when this connector is configured.
-	 */
-	public function filter_has_credentials( $has_credentials ): bool {
-		return (bool) $has_credentials || self::has_credentials();
-	}
-
-	/**
-	 * Prepends the default text model to a preference list.
-	 *
-	 * @since 1.0.0
-	 *
-	 * @param array<int, mixed> $models Existing preferences.
-	 * @return array<int, mixed> Updated preferences.
-	 */
-	public function prepend_text_model( array $models ): array {
-		return $this->prepend_model( $models, self::get_preferred_model( 'text' ) );
-	}
-
-	/**
-	 * Prepends the default vision model to a preference list.
-	 *
-	 * @since 1.0.0
-	 *
-	 * @param array<int, mixed> $models Existing preferences.
-	 * @return array<int, mixed> Updated preferences.
-	 */
-	public function prepend_vision_model( array $models ): array {
-		return $this->prepend_model( $models, self::get_preferred_model( 'vision' ) );
-	}
-
-	/**
-	 * Prepends the default image model to a preference list.
-	 *
-	 * @since 1.0.0
-	 *
-	 * @param array<int, mixed> $models Existing preferences.
-	 * @return array<int, mixed> Updated preferences.
-	 */
-	public function prepend_image_model( array $models ): array {
-		return $this->prepend_model( $models, self::get_preferred_model( 'image' ) );
-	}
-
-	/**
-	 * Prepends the default embedding model to a preference list.
-	 *
-	 * @since 1.0.0
-	 *
-	 * @param array<int, mixed> $models Existing preferences.
-	 * @return array<int, mixed> Updated preferences.
-	 */
-	public function prepend_embedding_model( array $models ): array {
-		return $this->prepend_model( $models, self::get_preferred_model( 'embedding' ) );
-	}
-
-	/**
-	 * Prepends the default tool-calling model to a preference list.
-	 *
-	 * @since 1.0.0
-	 *
-	 * @param array<int, mixed> $models Existing preferences.
-	 * @return array<int, mixed> Updated preferences.
-	 */
-	public function prepend_tools_model( array $models ): array {
-		return $this->prepend_model( $models, self::get_preferred_model( 'tools' ) );
-	}
-
-	/**
-	 * Prepends one model to a preference list without creating duplicates.
-	 *
-	 * @since 1.0.0
-	 *
-	 * @param array<int, mixed> $models Existing preferences.
-	 * @param string            $model_id Model identifier.
-	 * @return array<int, mixed> Updated preferences.
-	 */
-	private function prepend_model( array $models, string $model_id ): array {
-		if ( '' === $model_id ) {
-			return $models;
-		}
-
-		$provider_id = OpenRouterProfile::id();
-		$models      = array_values(
-			array_filter(
-				$models,
-				static function ( $model ) use ( $provider_id, $model_id ): bool {
-					return ! is_array( $model )
-						|| ! isset( $model[0], $model[1] )
-						|| $provider_id !== $model[0]
-						|| $model_id !== $model[1];
-				}
-			)
-		);
-
-		array_unshift( $models, array( $provider_id, $model_id ) );
-
-		return $models;
-	}
-
-	/**
 	 * Lists the models the AI Client can see for this provider.
 	 *
 	 * @since 1.0.0
@@ -1150,7 +1046,7 @@ class OpenRouterSettings {
 	 */
 	private function save_api_key( array $value ): void {
 		if ( ! empty( $value['clear_api_key'] ) ) {
-			update_option( self::API_KEY_OPTION, '', false );
+			update_option( self::api_key_option(), '' );
 			return;
 		}
 
@@ -1163,7 +1059,7 @@ class OpenRouterSettings {
 			return;
 		}
 
-		update_option( self::API_KEY_OPTION, $api_key, false );
+		update_option( self::api_key_option(), $api_key );
 	}
 
 	/**
@@ -1255,6 +1151,23 @@ class OpenRouterSettings {
 	}
 
 	/**
+	 * Returns the option WordPress stores this connector's API key in.
+	 *
+	 * WordPress discovers every registered AI Client provider as a connector and
+	 * registers one API key setting per connector, which the Connectors screen
+	 * writes and which core hands to the AI Client on init. The connector reads
+	 * and writes that same option, so both screens always agree and neither can
+	 * overwrite the other with a stale or empty credential.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return string Option name.
+	 */
+	public static function api_key_option(): string {
+		return 'connectors_ai_' . str_replace( '-', '_', OpenRouterProfile::id() ) . '_api_key';
+	}
+
+	/**
 	 * Returns the API key stored in the database.
 	 *
 	 * @since 1.0.0
@@ -1262,7 +1175,7 @@ class OpenRouterSettings {
 	 * @return string Stored API key, or an empty string.
 	 */
 	public static function get_saved_api_key(): string {
-		$api_key = get_option( self::API_KEY_OPTION, '' );
+		$api_key = get_option( self::api_key_option(), '' );
 
 		return is_string( $api_key ) ? $api_key : '';
 	}

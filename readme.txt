@@ -76,12 +76,6 @@ No. WordPress core ships its own connectors. This plugin adds OpenRouter alongsi
 
 No. The key is stored in its own option, is never rendered back into the settings screen, and is excluded from the diagnostics report and from Site Health debug information.
 
-== Screenshots ==
-
-1. The OpenRouter connector on the Settings > Connectors screen.
-2. Model discovery and per-capability defaults on the connector settings screen.
-3. The redacted diagnostics report.
-
 == Changelog ==
 
 = 1.0.0 =

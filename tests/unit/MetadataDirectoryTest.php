@@ -146,4 +146,8 @@ class MetadataDirectoryTest extends TestCase {
 
 		$this->assertSame( $preferred, $models[0]->getId() );
 	}
+
+
+
+
 }

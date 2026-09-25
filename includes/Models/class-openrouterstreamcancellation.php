@@ -9,6 +9,10 @@ declare( strict_types=1 );
 
 namespace Zactonz\AiConnectorForOpenRouter\Models;
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 use RuntimeException;
 
 /**

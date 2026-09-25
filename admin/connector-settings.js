@@ -109,7 +109,7 @@
 
 		var apiKey = textInput( 'password', text( 'savedValue' ) );
 		inputs.api_key = apiKey;
-		panel.appendChild( labelledInput( 'API key', apiKey, '' ) );
+		panel.appendChild( labelledInput( text( 'apiKey' ), apiKey, '' ) );
 
 		( config.fields || [] ).forEach( function ( field ) {
 			var input;

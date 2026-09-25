@@ -66,8 +66,11 @@ class Plugin {
 	/**
 	 * Applies the stored credential after core has wired the Connectors screen.
 	 *
-	 * Core wires Connector credentials at init priority 20, so this runs later
-	 * and keeps the connector's own stored key authoritative.
+	 * Core wires connector credentials at init priority 20, so this runs later and
+	 * substitutes the connector's own authentication class, which carries the
+	 * provider-specific headers core knows nothing about. It reads the same option
+	 * core does, and steps aside when there is no key, so an unconfigured
+	 * connector never replaces a working credential with an empty one.
 	 *
 	 * @since 1.0.0
 	 */
@@ -82,9 +85,15 @@ class Plugin {
 			return;
 		}
 
+		$api_key = OpenRouterSettings::get_api_key();
+
+		if ( '' === $api_key ) {
+			return;
+		}
+
 		$registry->setProviderRequestAuthentication(
 			OpenRouterProfile::id(),
-			new OpenRouterRequestAuthentication( OpenRouterSettings::get_api_key() )
+			new OpenRouterRequestAuthentication( $api_key )
 		);
 	}
 
